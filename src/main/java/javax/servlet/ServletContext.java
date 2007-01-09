@@ -1,18 +1,30 @@
+
+
 /*
-* Copyright 2004 The Apache Software Foundation
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the "License").  You may not use this file except
+ * in compliance with the License.
+ *
+ * You can obtain a copy of the license at
+ * glassfish/bootstrap/legal/CDDLv1.0.txt or
+ * https://glassfish.dev.java.net/public/CDDLv1.0.html.
+ * See the License for the specific language governing
+ * permissions and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * HEADER in each file and include the License file at
+ * glassfish/bootstrap/legal/CDDLv1.0.txt.  If applicable,
+ * add the following below this CDDL HEADER, with the
+ * fields enclosed by brackets "[]" replaced with your
+ * own identifying information: Portions Copyright [yyyy]
+ * [name of copyright owner]
+ *
+ * Copyright 2005 Sun Microsystems, Inc. All rights reserved.
+ *
+ * Portions Copyright Apache Software Foundation.
+ */
+
 package javax.servlet;
 
 import java.io.InputStream;
@@ -45,7 +57,6 @@ import java.util.Set;
  * servlet when the servlet is initialized.
  *
  * @author 	Various
- * @version 	$Version$
  *
  * @see 	Servlet#getServletConfig
  * @see 	ServletConfig#getServletContext
@@ -53,6 +64,32 @@ import java.util.Set;
  */
 
 public interface ServletContext {
+
+    /**
+     * Returns the context path of the web application.
+     *
+     * <p>The context path is the portion of the request URI that is used
+     * to select the context of the request. The context path always comes
+     * first in a request URI. The path starts with a "/" character but does
+     * not end with a "/" character. For servlets in the default (root)
+     * context, this method returns "".
+     *
+     * <p>It is possible that a servlet container may match a context by
+     * more than one context path. In such cases the
+     * {@link javax.servlet.http.HttpServletRequest#getContextPath()}
+     * will return the actual context path used by the request and it may
+     * differ from the path returned by this method.
+     * The context path returned by this method should be considered as the
+     * prime or preferred context path of the application.
+     *
+     * @return The context path of the web application, or "" for the
+     * default (root) context
+     *
+     * @see javax.servlet.http.HttpServletRequest#getContextPath()
+     *
+     * @since Servlet 2.5
+     */
+    public String getContextPath();
 
 
     /**
@@ -82,14 +119,12 @@ public interface ServletContext {
 
     public ServletContext getContext(String uripath);
     
-
-    public String getContextPath();
-
+    
 
     /**
      * Returns the major version of the Java Servlet API that this
      * servlet container supports. All implementations that comply
-     * with Version 2.4 must have this method
+     * with Version 2.5 must have this method
      * return the integer 2.
      *
      * @return 		2
@@ -103,10 +138,10 @@ public interface ServletContext {
     /**
      * Returns the minor version of the Servlet API that this
      * servlet container supports. All implementations that comply
-     * with Version 2.4 must have this method
-     * return the integer 4.
+     * with Version 2.5 must have this method
+     * return the integer 5.
      *
-     * @return 		4
+     * @return 		5
      *
      */
 
