@@ -986,6 +986,24 @@ class NoBodyResponse implements HttpServletResponse {
     public String encodeRedirectUrl(String url)
       { return this.encodeRedirectURL(url); }
 
+    public void disable()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void enable()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public boolean isDisabled()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
 
 

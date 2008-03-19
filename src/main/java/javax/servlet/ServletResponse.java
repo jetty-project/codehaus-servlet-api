@@ -456,6 +456,37 @@ public interface ServletResponse {
 
 
 
+    /**
+     * Disable the response.
+     * <p>The response is disabled by this call, so that all calls to set headers,
+     * write to output streams or writers, commit the response or otherwise modify the
+     * response are silently ignored. A response will remain disabled until a call
+     * to {@link #enable()} or the scope of the response returns to the container.
+     * Disabling a response may be used  to prevent servlets, filters and frameworks 
+     * that are unaware of the {@link ServletRequest#suspend()} mechanism 
+     * from committing a response on a suspended request.
+     * 
+     * @see {@link #enable()}
+     * @since 3.0
+     */
+     void disable();
+
+    /**
+     * Enable the response.
+     * <p>A disabled response is enabled by this call, so that it can be modified and 
+     * committed.
+     * @see {@link enable()}
+     * @since 3.0
+     */
+     void enable();
+
+    /**
+     * Is the response disabled.
+     * @return true if the response is disabled
+     * @since 3.0
+     */
+     boolean isDisabled(); 
+
 }
 
 

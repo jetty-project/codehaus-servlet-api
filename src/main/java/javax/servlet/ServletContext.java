@@ -1,5 +1,3 @@
-
-
 /*
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -31,6 +29,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.EnumSet;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -124,10 +124,10 @@ public interface ServletContext {
     /**
      * Returns the major version of the Java Servlet API that this
      * servlet container supports. All implementations that comply
-     * with Version 2.5 must have this method
-     * return the integer 2.
+     * with Version 3.0 must have this method
+     * return the integer 3.
      *
-     * @return 		2
+     * @return 		3
      *
      */
     
@@ -138,10 +138,10 @@ public interface ServletContext {
     /**
      * Returns the minor version of the Servlet API that this
      * servlet container supports. All implementations that comply
-     * with Version 2.5 must have this method
-     * return the integer 5.
+     * with Version 3.0 must have this method
+     * return the integer 0.
      *
-     * @return 		5
+     * @return 		0
      *
      */
 
@@ -675,6 +675,130 @@ public interface ServletContext {
      */
     
     public String getServletContextName();
+
+ 
+    /**
+     * Adds the servlet with the given name, description, and class name to
+     * this servlet context.
+     *
+     * <p>If <tt>loadOnStartup</tt> is a positive integer or zero, it
+     * indicates to the container the initialization priority of the
+     * servlet. In this case, the container must instantiate and initialize
+     * the servlet during the initialization phase of this servlet context,
+     * that is, after it has invoked all of the ServletContextListeners
+     * configured for this servlet context at their
+     * {@link ServletContextListener#contextInitialized} method.
+     *
+     * <p>If <tt>loadOnStartup</tt> is a negative integer, the container
+     * is free to instantiate and initialize the servlet lazily.
+     *
+     * @param servletName the name of the servlet
+     * @param description the description of the servlet
+     * @param className the fully qualified class name of the servlet
+     * @param initParameters the initialization parameters of the servlet,
+     * or null if the servlet does not need any
+     * @param loadOnStartup the initialization priority of the servlet
+     *
+     * @throws IllegalArgumentException if a servlet with the given
+     * <tt>servletName</tt> already exists in this servlet context
+     * @throws IllegalStateException if this servlet context has already
+     * been initialized
+     *
+     * @since 3.0
+     */
+    public void addServlet(String servletName,
+                           String description,
+                           String className,
+                           Map<String, String> initParameters,
+                           int loadOnStartup);
+ 
+    /**
+     * Adds a servlet mapping with the given url patterns for the servlet
+     * with the given servlet name to this servlet context.
+     *
+     * <p>The servlet with the given name may have been declared in the
+     * deployment descriptor or one of the web fragments of this servlet
+     * context, or may be added using {@link #addServlet addServlet}. It is
+     * legal to add a servlet mapping for a servlet that has not yet been
+     * added.
+     *
+     * @param servletName the name of the servlet for which the servlet
+     * mapping is added
+     * @param urlPatterns the url patterns of the servlet mapping
+     *
+     * @throws IllegalArgumentException if <tt>urlPatterns</tt> is null
+     * or empty
+     * @throws IllegalStateException if this servlet context has already
+     * been initialized
+     *
+     * @since 3.0
+     */
+    public void addServletMapping(String servletName,
+                                  String[] urlPatterns);
+ 
+    /**
+     * Adds the filter with the given name, description, and class name to
+     * this servlet context.
+     *
+     * @param filterName the name of the filter
+     * @param description the description of the filter
+     * @param className the fully qualified class name of the filter
+     * @param initParameters the initialization parameters of the filter,
+     * or null if the filter does not need any
+     *
+     * @throws IllegalArgumentException if a filter with the given
+     * <tt>filterName</tt> already exists in this servlet context
+     * @throws IllegalStateException if this servlet context has already
+     * been initialized
+     *
+     * @since 3.0
+     */
+    public void addFilter(String filterName,
+                          String description,
+                          String className,
+                          Map<String, String> initParameters);
+ 
+    /**
+     * Adds a filter mapping with the given url patterns, servlet names, and
+     * dispatcher types for the filter with the given filter name to this
+     * servlet context.
+     *
+     * <p>The filter with the given name may have been declared in the
+     * deployment descriptor or one of the web fragments of this servlet
+     * context, or may be added using {@link #addFilter addFilter}. It is
+     * legal to add a filter mapping for a filter that has not yet been added.
+     *
+     * <p>Filter mappings added via this method will be matched against 
+     * requests in the same order in which they were added.
+     * 
+     * <p>Depending on the value of the <tt>isMatchAfter</tt> parameter, the
+     * given filter mapping will be considered after or before any
+     * <i>declared</i> filter mappings of this servlet context.
+     *
+     * @param filterName the name of the filter for which the filter
+     * mapping is added
+     * @param urlPatterns the url patterns of the filter mapping
+     * @param servletNames the servlet names of the filter mapping
+     * @param dispatcherTypes the dispatcher types of the filter mapping,
+     * or null if the default <tt>DispatcherType.REQUEST</tt> is to be used
+     * @param isMatchAfter true if the given filter mapping should be matched
+     * against requests after any declared filter mappings of this servlet
+     * context, and false if it is supposed to be matched before any declared
+     * filter mappings of this servlet context
+     *
+     * @throws IllegalArgumentException if <tt>urlPatterns</tt> and
+     * <tt>servletNames</tt> are both null or empty
+     * @throws IllegalStateException if this servlet context has already
+     * been initialized
+     *
+     * @since 3.0
+     */
+    public void addFilterMapping(String filterName,
+                                 String[] urlPatterns,
+                                 String[] servletNames,
+                                 EnumSet<DispatcherType> dispatcherTypes,
+                                 boolean isMatchAfter);
+ 
 }
-
-
+ 
+ 

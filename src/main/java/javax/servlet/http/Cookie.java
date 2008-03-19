@@ -97,7 +97,7 @@ public class Cookie implements Cloneable {
     private String path;	// ;Path=VALUE ... URLs that see the cookie
     private boolean secure;	// ;Secure ... e.g. use SSL
     private int version = 0;	// ;Version=1 ... means RFC 2109++ style
-    
+    private boolean isHttpOnly;    
     
 
     /**
@@ -542,5 +542,38 @@ public class Cookie implements Cloneable {
 	    throw new RuntimeException(e.getMessage());
 	}
     }
+
+    /**
+     * Marks or unmarks this cookie as <i>HttpOnly</i>.
+     *
+     * <p>If <tt>isHttpOnly</tt> is set to <tt>true</tt>, this cookie is
+     * marked as <i>HttpOnly</i>, by adding the <tt>httpOnly</tt> attribute
+     * to it.
+     *
+     * <p><i>HttpOnly</i> cookies are not supposed to be exposed to
+     * client-side scripting code, making their use in cross-site scripting
+     * attacks more difficult.
+     *
+     * @param isHttpOnly true if this cookie is to be marked as
+     * <i>HttpOnly</i>, false otherwise
+     *
+     * @since 3.0
+     */
+    public void setHttpOnly(boolean isHttpOnly) {
+        this.isHttpOnly = isHttpOnly;
+    }
+
+    /**
+     * Checks whether this cookie has been marked as <i>HttpOnly</i>. 
+     *
+     * @return true if this cookie has been marked as <i>HttpOnly</i>,
+     * false otherwise
+     *
+     * @since 3.0
+     */
+    public boolean isHttpOnly() {
+        return isHttpOnly;
+    }
+
 }
 

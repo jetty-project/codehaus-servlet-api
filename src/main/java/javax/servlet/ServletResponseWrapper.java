@@ -219,6 +219,34 @@ public class ServletResponseWrapper implements ServletResponse {
 	return this.response.getLocale();
     }
 
+    /* ------------------------------------------------------------ */
+    /**
+     * @see javax.servlet.ServletResponse#disable()
+     */
+    public void disable()
+    {
+        response.disable();
+    }
+
+    /* ------------------------------------------------------------ */
+    /**
+     * @see javax.servlet.ServletResponse#enable()
+     */
+    public void enable()
+    {
+        response.enable();
+    }
+
+    /* ------------------------------------------------------------ */
+    /**
+     * @return
+     * @see javax.servlet.ServletResponse#isDisabled()
+     */
+    public boolean isDisabled()
+    {
+        return response.isDisabled();
+    }
+
 
 }
 

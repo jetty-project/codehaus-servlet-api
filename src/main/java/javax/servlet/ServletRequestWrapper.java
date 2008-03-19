@@ -407,6 +407,105 @@ public class ServletRequestWrapper implements ServletRequest {
     public int getLocalPort(){
         return this.request.getLocalPort();
     }
+
+    /* ------------------------------------------------------------ */
+    /**
+     * @throws IOException 
+     * @see javax.servlet.ServletRequest#complete()
+     */
+    public void complete() throws IOException
+    {
+        request.complete();
+    }
+
+    /* ------------------------------------------------------------ */
+    /**
+     * @return
+     * @see javax.servlet.ServletRequest#isInitial()
+     */
+    public boolean isInitial()
+    {
+        return request.isInitial();
+    }
+
+    /* ------------------------------------------------------------ */
+    /**
+     * @return
+     * @see javax.servlet.ServletRequest#isResumed()
+     */
+    public boolean isResumed()
+    {
+        return request.isResumed();
+    }
+
+    /* ------------------------------------------------------------ */
+    /**
+     * @return
+     * @see javax.servlet.ServletRequest#isSuspended()
+     */
+    public boolean isSuspended()
+    {
+        return request.isSuspended();
+    }
+
+    /* ------------------------------------------------------------ */
+    /**
+     * @return
+     * @see javax.servlet.ServletRequest#isTimeout()
+     */
+    public boolean isTimeout()
+    {
+        return request.isTimeout();
+    }
+
+    /* ------------------------------------------------------------ */
+    /**
+     * @see javax.servlet.ServletRequest#resume()
+     */
+    public void resume()
+    {
+        request.resume();
+    }
+
+    /* ------------------------------------------------------------ */
+    /**
+     * @see javax.servlet.ServletRequest#suspend()
+     */
+    public void suspend()
+    {
+        request.suspend();
+    }
+
+    /* ------------------------------------------------------------ */
+    /**
+     * @param timeoutMs
+     * @see javax.servlet.ServletRequest#suspend(long)
+     */
+    public void suspend(long timeoutMs)
+    {
+        request.suspend(timeoutMs);
+    }
+
+    /* ------------------------------------------------------------ */
+    /**
+     * @return
+     * @see javax.servlet.ServletRequest#getServletContext()
+     */
+    public ServletContext getServletContext()
+    {
+        return request.getServletContext();
+    }
+
+    /* ------------------------------------------------------------ */
+    /**
+     * @return
+     * @see javax.servlet.ServletRequest#getServletResponse()
+     */
+    public ServletResponse getServletResponse()
+    {
+        return request.getServletResponse();
+    }
+    
     
 }
 

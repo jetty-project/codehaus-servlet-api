@@ -48,4 +48,27 @@ public interface ServletRequestListener extends EventListener {
 
     /** The request is about to come into scope of the web application. */
     public void requestInitialized ( ServletRequestEvent sre );
+    
+    /**
+     * A request has been suspended.
+     * Called by the thread that dispatched the servlet when it
+     * has returned to the container.
+     * @since 3.0
+     */
+    void requestSuspended(ServletRequestEvent rre);
+
+    /**
+     * A request has been resumed.
+     * Called by the thread that will dispatch to the servlet 
+     * immediately before dispatch. 
+     * @since 3.0
+     */
+    void requestResumed(ServletRequestEvent rre);
+
+    /**
+     * A request has been completed.
+     * Called from a call to {@ServletRequest#complete()} 
+     * @since 3.0
+     */
+    void requestCompleted(ServletRequestEvent rre);
 }
