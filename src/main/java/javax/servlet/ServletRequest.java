@@ -706,7 +706,7 @@ public interface ServletRequest {
 
     /**
      * @return true after {@link #suspend(long)} has been called and before the request 
-     * has been resumed, completed, timed out or reactived due to IO activity.
+     * has been redispatched due to being resumed, completed or timed out.
      * @since 3.0
      */
      boolean isSuspended();
