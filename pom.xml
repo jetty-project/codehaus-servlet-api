@@ -12,6 +12,11 @@
   <description>Servlet API</description>
   <packaging>jar</packaging>
   <url>http://jetty.mortbay.org</url>
+  <scm>
+    <connection>scm:svn:http://svn.codehaus.org/jetty/servlet-api/tags/servlet-api-3.0.pre1</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/jetty/servlet-api/tags/servlet-api-3.0.pre1</developerConnection>
+    <url>scm:svn:https://svn.codehaus.org/jetty/servlet-api/tags/servlet-api-3.0.pre1</url>
+  </scm>
   <build>
     <defaultGoal>install</defaultGoal>
     <resources>
@@ -54,23 +59,12 @@
            </execution>
         </executions>
       </plugin>
-
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
+        <artifactId>maven-release-plugin</artifactId>
         <configuration>
-          <archive>
-             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-          </archive>
+          <tagBase>https://svn.codehaus.org/jetty/servlet-api/tags</tagBase>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
-
-  <scm>
-    <connection>scm:svn:https://svn.codehaus.org/jetty/pom/tags/servlet-api-3.0.pre1</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/jetty/pom/tags/servlet-api-3.0.pre1</developerConnection>
-    <url>scm:svn:https://svn.codehaus.org/jetty/pom/tags/servlet-api-3.0.pre1</url>
-  </scm>
 </project>
