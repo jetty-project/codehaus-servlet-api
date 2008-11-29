@@ -32,60 +32,53 @@
  * and therefore, elected the GPL Version 2 license, then the option applies
  * only if the new code is made subject to such option by the copyright
  * holder.
- *
- *
- * This file incorporates work covered by the following copyright and
- * permission notice:
- *
- * Copyright 2004 The Apache Software Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * 
  */
-
-
 
 package javax.servlet;
 
-import java.util.EventListener;
+/**
+ * Event that gets fired when a ServletRequest on which asynchronous
+ * processing was started has finished processing through a call to
+ * {@link AsyncContext#complete} or has timed out.
+ *
+ * @since 3.0
+ */
+public class AsyncEvent { 
 
-	/** 
-	 * Implementations of this interface receive notifications about
-	 * changes to the servlet context of the web application they are
-	 * part of.
-	 * To receive notification events, the implementation class
-	 * must be configured in the deployment descriptor for the web
-	 * application.
-	 * @see ServletContextEvent
-	 * @since	v 2.3
-	 */
+    private ServletRequest request;
+    private ServletResponse response;
 
-public interface ServletContextListener extends EventListener {
-	/**
-	 ** Notification that the web application initialization
-	 ** process is starting.
-	 ** All ServletContextListeners are notified of context
-	 ** initialization before any filter or servlet in the web
-	 ** application is initialized.
-	 */
+    /**
+     * Constructs an AsyncEvent from the given request and response objects.
+     *
+     * @param request the ServletRequest
+     * @param response the ServletResponse
+     */
+    public AsyncEvent(ServletRequest request, ServletResponse response) {
+        this.request = request;
+        this.response = response;
+    }
 
-    public void contextInitialized ( ServletContextEvent sce );
 
-	/**
-	 ** Notification that the servlet context is about to be shut down.
-	 ** All servlets and filters have been destroy()ed before any
-	 ** ServletContextListeners are notified of context
-	 ** destruction.
-	 */
-    public void contextDestroyed ( ServletContextEvent sce );
+    /**
+     * Gets the ServletRequest from this event
+     *
+     * @return the ServletRequest
+     */
+    public ServletRequest getRequest() {
+        return request;
+    }
+
+
+    /**
+     * Gets the ServletResponse from this event
+     *
+     * @return the ServletResponse
+     */
+    public ServletResponse getResponse() {
+        return response;
+    }
+
 }
 

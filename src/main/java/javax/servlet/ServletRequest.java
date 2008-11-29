@@ -1,21 +1,58 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * Copyright 1997-2008 Sun Microsystems, Inc. All rights reserved.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * The contents of this file are subject to the terms of either the GNU
+ * General Public License Version 2 only ("GPL") or the Common Development
+ * and Distribution License("CDDL") (collectively, the "License").  You
+ * may not use this file except in compliance with the License. You can obtain
+ * a copy of the License at https://glassfish.dev.java.net/public/CDDL+GPL.html
+ * or glassfish/bootstrap/legal/LICENSE.txt.  See the License for the specific
+ * language governing permissions and limitations under the License.
+ *
+ * When distributing the software, include this License Header Notice in each
+ * file and include the License file at glassfish/bootstrap/legal/LICENSE.txt.
+ * Sun designates this particular file as subject to the "Classpath" exception
+ * as provided by Sun in the GPL Version 2 section of the License file that
+ * accompanied this code.  If applicable, add the following below the License
+ * Header, with the fields enclosed by brackets [] replaced by your own
+ * identifying information: "Portions Copyrighted [year]
+ * [name of copyright owner]"
+ *
+ * Contributor(s):
+ *
+ * If you wish your version of this file to be governed by only the CDDL or
+ * only the GPL Version 2, indicate your decision by adding "[Contributor]
+ * elects to include this software in this distribution under the [CDDL or GPL
+ * Version 2] license."  If you don't indicate a single choice of license, a
+ * recipient has the option to distribute your version of this file under
+ * either the CDDL, the GPL Version 2 or to extend the choice of license to
+ * its licensees as provided above.  However, if you add GPL Version 2 code
+ * and therefore, elected the GPL Version 2 license, then the option applies
+ * only if the new code is made subject to such option by the copyright
+ * holder.
+ *
+ *
+ * This file incorporates work covered by the following copyright and
+ * permission notice:
+ *
+ * Copyright 2004 The Apache Software Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
+
 
 package javax.servlet;
 
@@ -39,7 +76,6 @@ import java.util.Map;
  * provided by {@link javax.servlet.http.HttpServletRequest}.
  * 
  * @author 	Various
- * @version 	$Version$
  *
  * @see 	javax.servlet.http.HttpServletRequest
  *
@@ -113,17 +149,19 @@ public interface ServletRequest {
 
     public String getCharacterEncoding();
 
- /**
+
+    /**
      * Overrides the name of the character encoding used in the body of this
      * request. This method must be called prior to reading request parameters
-     * or reading input using getReader().
+     * or reading input using getReader(). Otherwise, it has no effect.
      * 
-     *
-     * @param env	a <code>String</code> containing the name of 
-     *			the character encoding.
-     * @throws		java.io.UnsupportedEncodingException if this is not a valid encoding
+     * @param env      <code>String</code> containing the name of
+     *                 the character encoding.
+     * @throws         java.io.UnsupportedEncodingException if this
+     *                 ServletRequest is still in a state where a
+     *                 character encoding may be set, but the specified
+     *                 encoding is invalid
      */
-
     public void setCharacterEncoding(String env) throws java.io.UnsupportedEncodingException;
 
     
@@ -574,6 +612,7 @@ public interface ServletRequest {
      */
     public String getLocalName();
 
+
     /**
      * Returns the Internet Protocol (IP) address of the interface on
      * which the request  was received.
@@ -596,153 +635,8 @@ public interface ServletRequest {
      * @since 2.4
      */
     public int getLocalPort();
-    
-    
-    
-    /**
-     * Suspend the processing of the request and associated {@link ServletResponse}.
-     * 
-     * <p>After this method has been called, the lifecycle of the request 
-     * will be extended beyond the return to the container from the 
-     * {@link Servlet#service(ServletRequest, ServletResponse)}  method and 
-     * {@link Filter#doFilter(ServletRequest, ServletResponse, FilterChain)} calls. If a 
-     * request is suspended, then the container will not commit the associated response 
-     * when the call to the filter chain and/or servlet service method returns to the 
-     * container. Any exceptions thrown to the container by a filter chain and/or 
-     * servlet for a suspended requests are silently ignored.</p>
-     *
-     * <p>When the thread calling the filter chain and/or servlet has returned to the 
-     * container with a suspended request, the thread is freed for other tasks and 
-     * the request is held pending either: <ul>
-     * <li>a call to {@link ServletRequest#resume()}.</li>
-     * <li>a call to {@link ServletRequest#complete()}.</li>
-     * <li>the passed or default timeout expires.</li>
-     * <li>there is IO activity on the connection that received the request, such
-     * as the close of the connection or the receipt of a pipelined request.
-     * </ul>
-     * <p>After any of the events listed above, the suspended request will be 
-     * redispatched via the filter and servlet processing.
-     * </p>
-     * 
-     * <p>If a request is already suspended, any subsequent calls to suspend will set
-     * the timeout to the minimum of the previous timeout and the newly passed 
-     * timeout</p>
-     * 
-     * <p>Suspend may only be called by a thread that is within the service calling 
-     * stack of {@link Filter#doFilter(ServletRequest, ServletResponse, FilterChain)}
-     * and/or {@link Servlet#service(ServletRequest, ServletResponse)}. A request that has    
-     * been dispatched for error handling may not be suspended.
-     * </p>
-     * 
-     * @see {@link #resume()}
-     * @see {@link #complete()}
-     * @since 3.0
-     * 
-     * @param timeoutMs The time in milliseconds to wait before retrying this request.
-     * 
-     * @exception IllegalStateException If the calling thread is not within the calling 
-     * stack of  {@link Filter#doFilter(ServletRequest, ServletResponse, FilterChain)}
-     * and/or {@link Servlet#service(ServletRequest, ServletResponse)} or if the request 
-     * has been dispatched for error handling.
-     */
-     void suspend(long timeoutMs);
 
-   /**
-     * Suspend the processing of the request and associated {@link ServletResponse}.
-     * 
-     * <p>Acts as a call to {@link #suspend(long)} but with a container supplied 
-     * timeout. The timeout the container will use may be obtained or set as a Long
-     * context attribute with the name "javax.servlet.suspendTimeoutMs"</p>
-     * @see suspend(long)
-     */
-     void suspend();
 
-    /**
-     * Resume a suspended request.
-     * 
-     * <p>This method can be called by any thread that has been passed a reference to 
-     * a suspended request. When called the request is redispatched to the normal filter 
-     * chain and servlet processing.</p>
-     * 
-     * <p>If resume is called before a suspended request is returned to the container 
-     * (ie the thread that called {@link #suspend(long)} is still within the filter
-     * chain and/or servlet service method), then the resume does not take effect until
-     * the call to the filter chain and/or servlet returns to the container. In this 
-     * case both {@link #isSuspended()} and {@link isResumed()} return true.</p>
-     * 
-     * <p>Multiple calls to resume are ignored</p>
-     * 
-     * @see {@link #suspend()}
-     * @since 3.0
-     * @exception IllegalStateException if the request is not suspended.
-     * 
-     */
-     void resume();
-
-    /**
-     * Complete a suspended request.
-     * 
-     * <p>This method can be called by any thread that has been passed a reference to 
-     * a suspended request. When a request is completed, the associated response object 
-     * commited and flushed. The request is not redispatched.</p>
-     * 
-     * <p>If complete is called before a suspended request is returned to the container 
-     * (ie the thread that called {@link #suspend(long)} is still within the filter
-     * chain and/or servlet service method), then the complete does not take effect until
-     * the call to the filter chain and/or servlet returns to the container. In this 
-     * case both {@link #isSuspended()} and {@link isResumed()} return true.</p>
-     * 
-     * <p>Once complete has been called and any thread calling the filter chain and/or 
-     * servlet chain has returned to the container, the request lifecycle is complete.
-     * The container is able to recycle request objects, so it is not valid hold a request
-     * reference after the end of the life cycle or to call any request methods.
-     * 
-     * @see {@link #suspend()}
-     * @since 3.0
-     * @exception IllegalStateException if the request is not suspended.
-     * 
-     */
-     void complete() throws IOException;
-
-    /**
-     * @return true after {@link #suspend(long)} has been called and before the request 
-     * has been redispatched due to being resumed, completed or timed out.
-     * @since 3.0
-     */
-     boolean isSuspended();
-
-    /**
-     * @return true if the request has been redispatched by a call to {@link #resume()}.   Returns false after any subsequent call to suspend
-     * @since 3.0
-     */
-     boolean isResumed();
-
-    /**
-     * @return true after a request has been redispatched as the result of a timeout. 
-     * Returns false after any subsequent call to suspend.
-     * @since 3.0
-     */
-     boolean isTimeout();
-
-    /**
-     * @return true while the request is within the initial dispatch to the filter chain
-     * and/or servlet. Will return false once the calling thread has returned to the
-     * container after suspend has been called and during any subsequent redispatch.
-     * @since 3.0
-     */
-     boolean isInitial();
-
-    /**
-     * Gets the servlet response with which this servlet request has been
-     * associated.
-     *
-     * @return the servlet response with which this servlet request has been
-     * associated
-     *
-     * @since 3.0
-     */
-     ServletResponse getServletResponse();
-     
     /**
      * Gets the servlet context to which this servlet request was last
      * dispatched.
@@ -752,7 +646,228 @@ public interface ServletRequest {
      *
      * @since 3.0
      */
-     ServletContext getServletContext();
+    public ServletContext getServletContext();
+
+
+    /**
+     * Puts this request into asynchronous mode, and initializes its
+     * {@link AsyncContext} with the original ServletRequest and 
+     * ServletResponse objects and the timeout derived according
+     * to the rules laid out in {@link #setAsyncTimeout}.
+     *
+     * <p>This will delay committal of the associated response until
+     * {@link AsyncContext#complete} is called on the returned
+     * {@link AsyncContext}, or the AsyncContext times out.
+     *
+     * <p>If a timeout occurs and none of the
+     * {@link AsyncListener#onTimeout(AsyncEvent)} handlers call
+     * {@link AsyncContext#complete} or one of the
+     * {@link AsyncContext#forward} methods, the container must call
+     * {@link AsyncContext#complete}.
+     *
+     * <p>Subsequent invocations of this method, or its overloaded 
+     * variant, will return the same AsyncContext instance, reinitialized
+     * as appropriate.
+     *
+     * @return the (re)initialized AsyncContext
+     * 
+     * @throws IllegalStateException if this request is within the scope of
+     * a filter or servlet that does not support asynchronous operation,
+     * that is, if {@link #isAsyncSupported} returns false, or if this method
+     * is called again outside the scope of a dispatch resulting from an
+     * {@link AsyncContext#forward}, or if the response has already been
+     * closed
+     *
+     * @since 3.0
+     */
+    public AsyncContext startAsync() throws IllegalStateException;
+    
+
+    /**
+     * Puts this request into asynchronous mode, and initializes its
+     * {@link AsyncContext} with the given request and response objects
+     * and the timeout derived according to the rules laid out in
+     * {@link #setAsyncTimeout}.
+     *
+     * <p>This will delay committal of the response until
+     * {@link AsyncContext#complete} is called on the returned
+     * {@link AsyncContext}, or the AsyncContext times out.
+     *
+     * <p>If a timeout occurs and none of the
+     * {@link AsyncListener#onTimeout(AsyncEvent)} handlers call
+     * {@link AsyncContext#complete} or one of the
+     * {@link AsyncContext#forward} methods, the container must call
+     * {@link AsyncContext#complete}.
+     *
+     * <p>Subsequent invocations of this method, or its zero-argument
+     * variant, will return the same AsyncContext instance, reinitialized
+     * as appropriate.
+     *
+     * @param servletRequest the ServletRequest used to initialize the
+     * AsyncContext
+     * @param servletResponse the ServletResponse used to initialize the
+     * AsyncContext
+     *
+     * @return the (re)initialized AsyncContext
+     * 
+     * @throws IllegalStateException if this request is within the scope of
+     * a filter or servlet that does not support asynchronous operation,
+     * that is, if {@link #isAsyncSupported} returns false, or if this method
+     * is called again outside the scope of a dispatch resulting from an
+     * {@link AsyncContext#forward}, or if the response has already been
+     * closed
+     *
+     * @since 3.0
+     */
+    public AsyncContext startAsync(ServletRequest servletRequest,
+                                   ServletResponse servletResponse)
+            throws IllegalStateException;
+
+
+    /**
+     * Checks if this request has been put into asynchronous mode.
+     *
+     * <p>A ServletRequest is put into asynchronous mode by calling
+     * {@link #startAsync} or
+     * {@link #startAsync(ServletRequest,ServletResponse)} on it.
+     *
+     * @return true if this request has been put into asynchronous mode,
+     * false otherwise
+     *
+     * @since 3.0
+     */
+    public boolean isAsyncStarted();
+
+
+    /**
+     * Checks if this request supports asynchronous operation.
+     *
+     * <p>Asynchronous operation is disabled for this request if this request
+     * is within the scope of a filter or servlet that has not been annotated
+     * or flagged in the deployment descriptor as being able to support
+     * asynchronous handling.
+     *
+     * @return true if this request supports asynchronous operation, false
+     * otherwise
+     *
+     * @since 3.0
+     */
+    public boolean isAsyncSupported();
+
+
+    /**
+     * Gets the AsyncContext that was created or reinitialized by the
+     * most recent invocation of {@link #startAsync} or
+     * {@link #startAsync(ServletRequest,ServletResponse)} on this request.
+     *
+     * @return the AsyncContext that was created or reinitialized by the
+     * most recent invocation of {@link #startAsync} or
+     * {@link #startAsync(ServletRequest,ServletResponse)} on
+     * this request 
+     *
+     * @throws IllegalStateException if this request has not been put 
+     * into asynchronous mode, i.e., if neither {@link #startAsync} nor
+     * {@link #startAsync(ServletRequest,ServletResponse)} has been called
+     *
+     * @since 3.0
+     */
+    public AsyncContext getAsyncContext();
+
+
+    /**
+     * Registers the given {@link AsyncListener} with this request for
+     * asynchronous complete and timeout events.
+     *
+     * <p>If {@link #startAsync} or
+     * {@link #startAsync(ServletRequest,ServletResponse)} is called on this
+     * request, an {@link AsyncEvent} will be sent to this AsyncListener as
+     * soon as the asynchronous operation has completed or timed out.
+     * The AsyncEvent will contain the ServletRequest and ServletResponse
+     * objects that were used to initialize the {@link AsyncContext}
+     * returned by the call to startAsync.
+     *
+     * <p>AsyncListener instances will be notified in the order
+     * in which they were added to this request.
+     *
+     * @param listener the AsyncListener to be registered
+     *
+     * @since 3.0
+     */
+    public void addAsyncListener(AsyncListener listener);
+
+
+    /**
+     * Registers the given {@link AsyncListener} with this request for 
+     * asynchronous complete and timeout events.
+     *
+     * <p>If {@link #startAsync} or
+     * {@link #startAsync(ServletRequest,ServletResponse)} is called on this
+     * request, an {@link AsyncEvent} will be sent to this AsyncListener as
+     * soon as the asynchronous operation has completed or timed out.
+     * The AsyncEvent will contain the given ServletRequest and
+     * ServletResponse objects.
+     *
+     * <p>AsyncListener instances will be notified in the order
+     * in which they were added to this request.
+     *
+     * <p>The specified request and response objects, which will be included
+     * in the AsyncEvent that will be delivered to the given AsyncListener,
+     * should not be read from or written to, respectively, at the time
+     * when the AsyncEvent is delivered, because additional wrapping may have
+     * occurred after this method was called. One of the main reasons for
+     * allowing request and response objects to be passed to this method is
+     * to allow the AsyncListener to release any resources associated with
+     * them when the AsyncEvent is delivered.
+     *
+     * @param listener the AsyncListener to be registered
+     * @param servletRequest the ServletRequest that will be included
+     * in the AsyncEvent
+     * @param servletResponse the ServletResponse that will be included
+     * in the AsyncEvent 
+     *
+     * @since 3.0
+     */
+    public void addAsyncListener(AsyncListener listener,
+                                 ServletRequest servletRequest,
+                                 ServletResponse servletResponse);
+
+
+    /**
+     * Sets the timeout (in milliseconds) for any asynchronous operations
+     * started on this request by a call to {@link #startAsync} or
+     * {@link #startAsync(ServletRequest, ServletResponse)}.
+     *
+     * <p>By default, the timeout specified via the
+     * <code>async-timeout</code> deployment descriptor element or the
+     * <code>asyncTimeout</code> annotation of the servlet or filter that
+     * started the asynchronous operation will be used.
+     *
+     * <p>If neither {@link AsyncContext#complete} nor
+     * {@link AsyncContext#forward} has been called within the
+     * specified timeout, any listeners of type {@link AsyncListener} that
+     * were added to this request via a call to
+     * {@link #addAsyncListener(AsyncListener)}
+     * or {@link #addAsyncListener(AsyncListener, ServletRequest,
+     * ServletResponse)} will have their
+     * {@link AsyncListener#onTimeout(AsyncEvent)} method invoked.
+     *
+     * <p>This method raises an <code>IllegalStateException</code> if
+     * called after {@link #startAsync}, unless it is called within the
+     * scope of an {@link AsyncContext#forward}, in which case the specified
+     * timeout will be used to initialize the AsyncContext created by a new
+     * call to {@link #startAsync}, or will be ignored if {@link #startAsync}
+     * is not called again. 
+     *
+     * @param timeout the timeout in milliseconds for any asynchronous
+     * operations started on this request
+     *
+     * @throws IllegalStateException if called after {@link #startAsync},
+     * unless within the scope of a dispatch resulting from an
+     * {@link AsyncContext#forward}
+     * 
+     * @since 3.0
+     */
+    public void setAsyncTimeout(long timeout);
 
 }
 

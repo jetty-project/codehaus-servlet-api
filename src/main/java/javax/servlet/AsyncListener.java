@@ -33,59 +33,54 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  *
- *
- * This file incorporates work covered by the following copyright and
- * permission notice:
- *
- * Copyright 2004 The Apache Software Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
-
-
 
 package javax.servlet;
 
+import java.io.IOException;
 import java.util.EventListener;
 
-	/** 
-	 * Implementations of this interface receive notifications about
-	 * changes to the servlet context of the web application they are
-	 * part of.
-	 * To receive notification events, the implementation class
-	 * must be configured in the deployment descriptor for the web
-	 * application.
-	 * @see ServletContextEvent
-	 * @since	v 2.3
-	 */
+/**
+ * Listener that will be notified when an asynchronous operation that was
+ * started on a ServletRequest by a call to {@link ServletRequest#startAsync}
+ * or {@link ServletRequest#startAsync(ServletRequest, ServletResponse)}
+ * completes or times out.
+ *
+ * @since 3.0
+ */
+public interface AsyncListener extends EventListener {
+    
+    /**
+     * Notifies this AsyncListener that an asynchronous operation
+     * started on the ServletRequest with which this AsyncListener was
+     * registered has been completed.
+     * 
+     * @param event the AsyncEvent containing the request and response
+     * objects that were used when this AsyncListener was registered via a
+     * call to {@link ServletRequest#addAsyncListener(AsyncListener)}
+     * or {@link ServletRequest#addAsyncListener(AsyncListener,
+     * ServletRequest, ServletResponse)}
+     *
+     * @throws IOException if an I/O exception occurred during the processing
+     * of the given AsyncEvent
+     */
+    public void onComplete(AsyncEvent event) throws IOException;
 
-public interface ServletContextListener extends EventListener {
-	/**
-	 ** Notification that the web application initialization
-	 ** process is starting.
-	 ** All ServletContextListeners are notified of context
-	 ** initialization before any filter or servlet in the web
-	 ** application is initialized.
-	 */
 
-    public void contextInitialized ( ServletContextEvent sce );
+    /**
+     * Notifies this AsyncListener that an asynchronous operation
+     * started on the ServletRequest with which this AsyncListener was
+     * registered has timed out.
+     * 
+     * @param event the AsyncEvent containing the request and response
+     * objects that were used when this AsyncListener was registered via a
+     * call to {@link ServletRequest#addAsyncListener(AsyncListener)}
+     * or {@link ServletRequest#addAsyncListener(AsyncListener,
+     * ServletRequest, ServletResponse)}
+     *
+     * @throws IOException if an I/O exception occurred during the processing
+     * of the given AsyncEvent
+     */
+    public void onTimeout(AsyncEvent event) throws IOException;
 
-	/**
-	 ** Notification that the servlet context is about to be shut down.
-	 ** All servlets and filters have been destroy()ed before any
-	 ** ServletContextListeners are notified of context
-	 ** destruction.
-	 */
-    public void contextDestroyed ( ServletContextEvent sce );
 }
-

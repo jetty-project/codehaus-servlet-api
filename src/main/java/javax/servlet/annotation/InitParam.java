@@ -24,15 +24,36 @@
  *
  */
 
-package javax.servlet;
+package javax.servlet.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.annotation.Documented;
 
 /**
- * Enumeration of valid filter dispatcher types.
+ * Used to declare init params in servlets in filters
+ * 
+ * @since Servlet 3.0
  */
-public enum DispatcherType {
-
-    FORWARD,
-    INCLUDE,
-    REQUEST,
-    ERROR
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface InitParam {
+    /**
+     * Name of the init param
+     */
+    String name();
+    
+    /**
+     * Value of the init param
+     */
+    
+    String value();
+    
+    /**
+     * Description of the init param
+     */
+    String description() default "";
 }

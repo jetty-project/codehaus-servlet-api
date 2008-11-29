@@ -1,21 +1,58 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * Copyright 1997-2008 Sun Microsystems, Inc. All rights reserved.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * The contents of this file are subject to the terms of either the GNU
+ * General Public License Version 2 only ("GPL") or the Common Development
+ * and Distribution License("CDDL") (collectively, the "License").  You
+ * may not use this file except in compliance with the License. You can obtain
+ * a copy of the License at https://glassfish.dev.java.net/public/CDDL+GPL.html
+ * or glassfish/bootstrap/legal/LICENSE.txt.  See the License for the specific
+ * language governing permissions and limitations under the License.
+ *
+ * When distributing the software, include this License Header Notice in each
+ * file and include the License file at glassfish/bootstrap/legal/LICENSE.txt.
+ * Sun designates this particular file as subject to the "Classpath" exception
+ * as provided by Sun in the GPL Version 2 section of the License file that
+ * accompanied this code.  If applicable, add the following below the License
+ * Header, with the fields enclosed by brackets [] replaced by your own
+ * identifying information: "Portions Copyrighted [year]
+ * [name of copyright owner]"
+ *
+ * Contributor(s):
+ *
+ * If you wish your version of this file to be governed by only the CDDL or
+ * only the GPL Version 2, indicate your decision by adding "[Contributor]
+ * elects to include this software in this distribution under the [CDDL or GPL
+ * Version 2] license."  If you don't indicate a single choice of license, a
+ * recipient has the option to distribute your version of this file under
+ * either the CDDL, the GPL Version 2 or to extend the choice of license to
+ * its licensees as provided above.  However, if you add GPL Version 2 code
+ * and therefore, elected the GPL Version 2 license, then the option applies
+ * only if the new code is made subject to such option by the copyright
+ * holder.
+ *
+ *
+ * This file incorporates work covered by the following copyright and
+ * permission notice:
+ *
+ * Copyright 2004 The Apache Software Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
+
 
 package javax.servlet;
 
@@ -55,7 +92,6 @@ import java.util.Locale;
  * are still evolving.
  *
  * @author 	Various
- * @version 	$Version$
  *
  * @see		ServletOutputStream
  *
@@ -96,9 +132,10 @@ public interface ServletResponse {
      * have been specified using {@link #setContentType}
      * before the response is committed. If no content type
      * has been specified, this method returns null.
-     * If a content type has been specified and a
+     * If a content type has been specified, and a
      * character encoding has been explicitly or implicitly
-     * specified as described in {@link #getCharacterEncoding},
+     * specified as described in {@link #getCharacterEncoding}
+     * or {@link #getWriter} has been called,
      * the charset parameter is included in the string returned.
      * If no character encoding has been specified, the
      * charset parameter is omitted.
@@ -447,37 +484,6 @@ public interface ServletResponse {
     public Locale getLocale();
 
 
-
-    /**
-     * Disable the response.
-     * <p>The response is disabled by this call, so that all calls to set headers,
-     * write to output streams or writers, commit the response or otherwise modify the
-     * response are silently ignored. A response will remain disabled until a call
-     * to {@link #enable()} or the scope of the response returns to the container.
-     * Disabling a response may be used  to prevent servlets, filters and frameworks 
-     * that are unaware of the {@link ServletRequest#suspend()} mechanism 
-     * from committing a response on a suspended request.
-     * 
-     * @see {@link #enable()}
-     * @since 3.0
-     */
-     void disable();
-
-    /**
-     * Enable the response.
-     * <p>A disabled response is enabled by this call, so that it can be modified and 
-     * committed.
-     * @see {@link enable()}
-     * @since 3.0
-     */
-     void enable();
-
-    /**
-     * Is the response disabled.
-     * @return true if the response is disabled
-     * @since 3.0
-     */
-     boolean isDisabled(); 
 
 }
 

@@ -27,12 +27,12 @@
 package javax.servlet;
 
 /**
- * Enumeration of valid filter dispatcher types.
+ * Enumeration of session tracking modes.
+ *
+ * @since 3.0
  */
-public enum DispatcherType {
-
-    FORWARD,
-    INCLUDE,
-    REQUEST,
-    ERROR
+public enum SessionTrackingMode {
+    COOKIE,
+    URL,
+    SSL
 }

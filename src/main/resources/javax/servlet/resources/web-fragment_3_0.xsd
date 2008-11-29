@@ -8,7 +8,7 @@
 	    version="3.0">
   <xsd:annotation>
     <xsd:documentation>
-      @(#)web-app_3_0.xsds	1.68 07/03/09
+      @(#)web-common_3_0.xsds
     </xsd:documentation>
   </xsd:annotation>
 
@@ -111,7 +111,7 @@
 
 <!-- **************************************************** -->
 
-  <xsd:element name="web-app" type="javaee:web-appType">
+  <xsd:element name="web-fragment" type="javaee:web-appType">
     <xsd:annotation>
       <xsd:documentation>
 
