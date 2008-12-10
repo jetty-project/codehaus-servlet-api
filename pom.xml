@@ -7,9 +7,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.mortbay.jetty</groupId>
   <artifactId>servlet-api</artifactId>
-  <version>3.0.edr.pre6</version>
-  <name>Servlet API</name>
-  <description>Servlet API</description>
+  <version>2.5</version>
+  <name>Servlet Specification API</name>
+  <description>Servlet Specification API</description>
   <packaging>jar</packaging>
   <scm>
     <connection>scm:svn:http://svn.codehaus.org/jetty/servlet-api/trunk</connection>
@@ -22,8 +22,8 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
+          <source>1.4</source>
+          <target>1.4</target>
           <verbose>false</verbose>
         </configuration>
       </plugin>
@@ -38,11 +38,11 @@
             </goals>
             <configuration>
               <instructions>
-              <Bundle-Version>3.0</Bundle-Version>
+              <Bundle-Version>2.5</Bundle-Version>
               <Import-Package>!javax.servlet.*,*</Import-Package>
-              <Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
+              <Bundle-RequiredExecutionEnvironment>J2SE-1.4</Bundle-RequiredExecutionEnvironment>
               <Implementation-Vendor>JCP</Implementation-Vendor>
-              <Specification-Version>3.0</Specification-Version>
+              <Specification-Version>2.5</Specification-Version>
               </instructions>
             </configuration>
            </execution>
