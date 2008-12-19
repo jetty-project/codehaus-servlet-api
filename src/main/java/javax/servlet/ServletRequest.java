@@ -868,6 +868,10 @@ public interface ServletRequest {
      * @since 3.0
      */
     public void setAsyncTimeout(long timeout);
+    
+    
+    
+    public DispatcherType getDispatcherType();
 
 }
 

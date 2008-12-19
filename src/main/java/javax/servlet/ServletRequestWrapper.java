@@ -559,5 +559,9 @@ public class ServletRequestWrapper implements ServletRequest {
         request.setAsyncTimeout(timeout);
     }
 
+
+    public DispatcherType getDispatcherType(){
+        return request.getDispatcherType();
+    };
 }
 

@@ -192,6 +192,9 @@ public interface AsyncContext {
      * @param run the asynchronous handler
      */
     public void start(Runnable run);
+    
+    
+    public boolean hasOriginalRequestAndResponse();
 }
 
 
