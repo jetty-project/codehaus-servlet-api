@@ -23,16 +23,26 @@
  * Copyright 2008 Sun Microsystems, Inc. All rights reserved.
  *
  */
+package javax.servlet.annotation;
 
-package javax.servlet;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Enumeration of filter dispatcher types.
+ * This annotation is used to declare a WebContextListener
+ * 
+ *@since Servlet 3.0
  */
-public enum DispatcherType {
-    FORWARD,
-    INCLUDE,
-    REQUEST,
-    ASYNC,
-    ERROR
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface WebContextListener {
+    /**
+     * Description of the listener
+     */
+    String description() default "";
 }
+    

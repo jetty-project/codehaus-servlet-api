@@ -23,86 +23,95 @@
  * Copyright 2008 Sun Microsystems, Inc. All rights reserved.
  *
  */
-
 package javax.servlet.annotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Retention;
 import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import javax.servlet.DispatcherType;
 
 /**
- * Annotation used to declare a servlet.
+ * Annotation used to declare a servlet filter.
  *
  * <p>This annotation is processed by the container at deployment time,
- * and the corresponding servlet made available at the specified URL
- * patterns.
+ * and the corresponding filter applied to the specified URL patterns,
+ * servlets, and dispatcher types.
  * 
- * @see javax.servlet.Servlet
+ * @see javax.servlet.Filter
  *
  * @since 3.0
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface WebServlet {
-    
+public @interface WebFilter {
+
     /**
-     * The name of the servlet
+     * The description of the filter
      */
-    String name() default "";
+    String description() default "";
     
     /**
-     * The URL patterns of the servlet
+     * The display name of the filter
+     */
+    String displayName() default "";
+    
+    /**
+     * The init parameters of the filter
+     */
+    WebInitParam[] initParams() default {};
+    
+    /**
+     * The name of the filter
+     */
+    String filterName() default "";
+    
+    /**
+     * The small-icon of the filter
+     */
+    String smallIcon() default "";
+
+    /**
+     * The large-icon of the filter
+     */
+    String largeIcon() default "";
+
+    /**
+     * The names of the servlets to which the filter applies.
+     */
+    String[] servletNames() default {};
+    
+    /**
+     * The URL patterns to which the filter applies
      */
     String[] value() default {};
 
     /**
-     * The URL patterns of the servlet
+     * The URL patterns to which the filter applies
      */
     String[] urlPatterns() default {};
-    
+
     /**
-     * The load-on-startup order of the servlet 
+     * The dispatcher types to which the filter applies
      */
-    int loadOnStartup() default -1;
+    DispatcherType[] dispatcherTypes() default {DispatcherType.REQUEST};
     
     /**
-     * The init parameters of the servlet
-     */
-    WebInitParam [] initParams() default {};
-    
-    /**
-     * Declares whether the servlet supports asynchronous operation mode.
+     * Declares whether the filter supports asynchronous operation mode.
      *
      * @see javax.servlet.ServletRequest#startAsync
      * @see javax.servlet.ServletRequest#startAsync(ServletRequest,
      * ServletResponse)
      */
     boolean asyncSupported() default false;
-    
+
     /**
      * The timeout for asynchronous operations initiated by the
-     * servlet.
+     * filter.
      *
      * @see javax.servlet.ServletRequest#setAsyncTimeout
      */
     long asyncTimeout() default 60000;
-    
-    /**
-     * The small-icon of the servlet
-     */
-    String smallIcon() default "";
-
-     /**
-      * The large-icon of the servlet
-      */
-    String largeIcon() default "";
-
-    /**
-     * The description of the servlet
-     */
-    String description() default "";
-
 }

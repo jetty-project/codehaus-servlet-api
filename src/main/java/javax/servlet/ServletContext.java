@@ -618,26 +618,17 @@ public interface ServletContext {
 
 
     /*
-     * Adds the servlet with the given name, description, and class name to
-     * this servlet context.
+     * Adds the servlet with the given name and class name to this servlet
+     * context.
      *
-     * <p>If <tt>loadOnStartup</tt> is a positive integer or zero, it
-     * indicates to the container the initialization priority of the
-     * servlet. In this case, the container must instantiate and initialize
-     * the servlet during the initialization phase of this servlet context,
-     * that is, after it has invoked all of the ServletContextListeners
-     * configured for this servlet context at their
-     * {@link ServletContextListener#contextInitialized} method.
-     *
-     * <p>If <tt>loadOnStartup</tt> is a negative integer, the container
-     * is free to instantiate and initialize the servlet lazily.
+     * <p>The registered servlet may be further configured via the returned
+     * {@link ServletRegistration} object.
      *
      * @param servletName the name of the servlet
-     * @param description the description of the servlet
      * @param className the fully qualified class name of the servlet
-     * @param initParameters the initialization parameters of the servlet,
-     * or null if the servlet does not need any
-     * @param loadOnStartup the initialization priority of the servlet
+     *
+     * @return a ServletRegistration object that may be used to further
+     * configure the registered servlet
      *
      * @throws IllegalArgumentException if a servlet with the given
      * <tt>servletName</tt> already exists in this servlet context
@@ -646,11 +637,8 @@ public interface ServletContext {
      *
      * @since 3.0
      */
-    public void addServlet(String servletName,
-                           String description,
-                           String className,
-                           Map<String, String> initParameters,
-                           int loadOnStartup);
+    public ServletRegistration addServlet(String servletName,
+                                          String className);
 
 
     /**
@@ -675,18 +663,18 @@ public interface ServletContext {
      * @since 3.0
      */
     public void addServletMapping(String servletName,
-                                  String[] urlPatterns);
+                                  String... urlPatterns);
 
 
     /**
-     * Adds the filter with the given name, description, and class name to
-     * this servlet context.
+     * Adds the filter with the given name and class name to this servlet
+     * context.
      *
      * @param filterName the name of the filter
-     * @param description the description of the filter
      * @param className the fully qualified class name of the filter
-     * @param initParameters the initialization parameters of the filter,
-     * or null if the filter does not need any
+     *
+     * @return a FilterRegistration object that may be used to further
+     * configure the registered filter
      *
      * @throws IllegalArgumentException if a filter with the given
      * <tt>filterName</tt> already exists in this servlet context
@@ -695,11 +683,9 @@ public interface ServletContext {
      *
      * @since 3.0
      */
-    public void addFilter(String filterName,
-                          String description,
-                          String className,
-                          Map<String, String> initParameters);
+    public FilterRegistration addFilter(String filterName, String className);
          
+
     /**
      * Adds a filter mapping with the given servlet names, and
      * dispatcher types for the filter with the given filter name to this

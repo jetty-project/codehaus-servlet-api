@@ -27,82 +27,33 @@
 package javax.servlet.annotation;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.annotation.Documented;
 
 /**
- * Annotation used to declare a servlet.
- *
- * <p>This annotation is processed by the container at deployment time,
- * and the corresponding servlet made available at the specified URL
- * patterns.
+ * Used to declare init params in servlets in filters
  * 
- * @see javax.servlet.Servlet
- *
- * @since 3.0
+ * @since Servlet 3.0
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface WebServlet {
+public @interface WebInitParam {
+    /**
+     * Name of the init param
+     */
+    String name();
     
     /**
-     * The name of the servlet
+     * Value of the init param
      */
-    String name() default "";
+    
+    String value();
     
     /**
-     * The URL patterns of the servlet
-     */
-    String[] value() default {};
-
-    /**
-     * The URL patterns of the servlet
-     */
-    String[] urlPatterns() default {};
-    
-    /**
-     * The load-on-startup order of the servlet 
-     */
-    int loadOnStartup() default -1;
-    
-    /**
-     * The init parameters of the servlet
-     */
-    WebInitParam [] initParams() default {};
-    
-    /**
-     * Declares whether the servlet supports asynchronous operation mode.
-     *
-     * @see javax.servlet.ServletRequest#startAsync
-     * @see javax.servlet.ServletRequest#startAsync(ServletRequest,
-     * ServletResponse)
-     */
-    boolean asyncSupported() default false;
-    
-    /**
-     * The timeout for asynchronous operations initiated by the
-     * servlet.
-     *
-     * @see javax.servlet.ServletRequest#setAsyncTimeout
-     */
-    long asyncTimeout() default 60000;
-    
-    /**
-     * The small-icon of the servlet
-     */
-    String smallIcon() default "";
-
-     /**
-      * The large-icon of the servlet
-      */
-    String largeIcon() default "";
-
-    /**
-     * The description of the servlet
+     * Description of the init param
      */
     String description() default "";
-
 }
