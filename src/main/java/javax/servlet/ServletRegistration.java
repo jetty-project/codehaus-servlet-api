@@ -41,7 +41,7 @@ import java.util.Map;
 /**
  * Class representing a handle to a {@link Servlet} registered via
  * {@link ServletContext#addServlet(String, String)}, which may be used to
- * configure the registered servlet.
+ * configure the servlet.
  *
  * @since 3.0
  */
@@ -150,5 +150,19 @@ public abstract class ServletRegistration {
     public void setAsyncSupported(boolean isAsyncSupported) {
         this.isAsyncSupported = isAsyncSupported;
     }
+
+
+    /**
+     * Adds a servlet mapping with the given URL patterns for the servlet
+     * represented by this ServletRegistration.
+     *
+     * @param urlPatterns the URL patterns of the servlet mapping
+     *
+     * @throws IllegalArgumentException if <tt>urlPatterns</tt> is null
+     * or empty
+     * @throws IllegalStateException if the ServletContext from which this
+     * ServletRegistration was obtained has already been initialized
+     */
+    public abstract void addMapping(String... urlPatterns);
 }
 
