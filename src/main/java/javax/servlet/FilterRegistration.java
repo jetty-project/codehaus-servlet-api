@@ -46,14 +46,11 @@ import java.util.Map;
  *
  * @since 3.0
  */
-public abstract class FilterRegistration {
-
-    protected String description;
-    protected boolean isAsyncSupported;
-
+public interface FilterRegistration {
 
     /**
-     * Sets the descriptions of the filter.
+     * Sets the description on the filter for which this 
+     * FilterRegistration was created.
      *
      * <p>A call to this method overrides any previous setting.
      *
@@ -62,14 +59,12 @@ public abstract class FilterRegistration {
      * @throws IllegalStateException if the ServletContext from which this
      * FilterRegistration was obtained has already been initialized
      */
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public void setDescription(String description);
 
 
     /*
      * Sets the initialization parameter with the given name and value
-     * on the filter.
+     * on the filter for which this FilterRegistration was created.
      *
      * <p>A call to this method overrides any existing initialization
      * parameter of the same name. Passing in a value of <code>null</code>
@@ -81,11 +76,12 @@ public abstract class FilterRegistration {
      * @throws IllegalStateException if the ServletContext from which this
      * FilterRegistration was obtained has already been initialized
      */ 
-    public abstract void setInitParameter(String name, String value);
+    public void setInitParameter(String name, String value);
 
 
     /*
-     * Sets the given initialization parameters on the filter.
+     * Sets the given initialization parameters on the filter for which
+     * this FilterRegistration was created.
      *
      * <p>The given map of initialization parameters is processed
      * <i>by-value</i>, i.e., for each initialization parameter contained
@@ -96,18 +92,12 @@ public abstract class FilterRegistration {
      * @throws IllegalStateException if the ServletContext from which this
      * FilterRegistration was obtained has already been initialized
      */ 
-    public void setInitParameters(Map<String, String> initParameters) {
-        if (null == initParameters) {
-            throw new IllegalArgumentException("Null init parameters");
-        }
-        for (Map.Entry<String, String> e : initParameters.entrySet()) {
-            setInitParameter(e.getKey(), e.getValue());
-        }
-    }
+    public void setInitParameters(Map<String, String> initParameters);
 
 
     /*
-     * Configures the filter as supporting asynchronous operations or not.
+     * Configures the filter for which this FilterRegistration was created
+     * as supporting asynchronous operations or not.
      *
      * <p>By default, a servlet does not support asynchronous operations.
      *
@@ -119,14 +109,12 @@ public abstract class FilterRegistration {
      * @throws IllegalStateException if the ServletContext from which this
      * FilterRegistration was obtained has already been initialized
      */
-    public void setAsyncSupported(boolean isAsyncSupported) {
-        this.isAsyncSupported = isAsyncSupported;
-    }
+    public void setAsyncSupported(boolean isAsyncSupported);
 
 
     /**
      * Adds a filter mapping with the given servlet names and dispatcher
-     * types for the filter represented by this FilterRegistration.
+     * types for the filter for which this FilterRegistration was created.
      *
      * <p>Filter mappings are matched in the order in which they were
      * added.
@@ -149,14 +137,14 @@ public abstract class FilterRegistration {
      * @throws IllegalStateException if the ServletContext from which this
      * FilterRegistration was obtained has already been initialized
      */
-    public abstract void addMappingForServletNames(
+    public void addMappingForServletNames(
         EnumSet<DispatcherType> dispatcherTypes, boolean isMatchAfter,
         String... servletNames);
 
 
     /**
      * Adds a filter mapping with the given url patterns and dispatcher
-     * types for the filter represented by this FilterRegistration.
+     * types for the filter for which this FilterRegistration was created.
      *
      * <p>Filter mappings are matched in the order in which they were
      * added.
@@ -179,7 +167,7 @@ public abstract class FilterRegistration {
      * @throws IllegalStateException if the ServletContext from which this
      * FilterRegistration was obtained has already been initialized
      */
-    public abstract void addMappingForUrlPatterns(
+    public void addMappingForUrlPatterns(
         EnumSet<DispatcherType> dispatcherTypes, boolean isMatchAfter,
         String... urlPatterns);
 }

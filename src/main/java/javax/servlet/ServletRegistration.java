@@ -45,15 +45,11 @@ import java.util.Map;
  *
  * @since 3.0
  */
-public abstract class ServletRegistration {
-
-    protected String description;
-    protected int loadOnStartup = -1;
-    protected boolean isAsyncSupported;
-
+public interface ServletRegistration {
 
     /**
-     * Sets the descriptions of the servlet.
+     * Sets the description on the servlet for which this ServletRegistration
+     * was created.
      *
      * <p>A call to this method overrides any previous setting.
      *
@@ -62,14 +58,12 @@ public abstract class ServletRegistration {
      * @throws IllegalStateException if the ServletContext from which this
      * ServletRegistration was obtained has already been initialized
      */
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public void setDescription(String description);
 
 
     /*
      * Sets the initialization parameter with the given name and value
-     * on the servlet.
+     * on the servlet for which this ServletRegistration was created.
      *
      * <p>A call to this method overrides any existing initialization
      * parameter of the same name. Passing in a value of <code>null</code>
@@ -81,11 +75,12 @@ public abstract class ServletRegistration {
      * @throws IllegalStateException if the ServletContext from which this
      * ServletRegistration was obtained has already been initialized
      */ 
-    public abstract void setInitParameter(String name, String value);
+    public void setInitParameter(String name, String value);
 
 
     /*
-     * Sets the given initialization parameters on the servlet.
+     * Sets the given initialization parameters on the servlet for which
+     * this ServletRegistration was created.
      *
      * <p>The given map of initialization parameters is processed
      * <i>by-value</i>, i.e., for each initialization parameter contained
@@ -96,18 +91,12 @@ public abstract class ServletRegistration {
      * @throws IllegalStateException if the ServletContext from which this
      * ServletRegistration was obtained has already been initialized
      */ 
-    public void setInitParameters(Map<String, String> initParameters) {
-        if (null == initParameters) {
-            throw new IllegalArgumentException("Null init parameters");
-        }
-        for (Map.Entry<String, String> e : initParameters.entrySet()) {
-            setInitParameter(e.getKey(), e.getValue());
-        }
-    }
+    public void setInitParameters(Map<String, String> initParameters);
 
 
     /*
-     * Sets the <code>loadOnStartup</code> priority of the servlet.
+     * Sets the <code>loadOnStartup</code> priority on the servlet for which
+     * this ServletRegistration was created.
      *
      * <p>A <tt>loadOnStartup</tt> value of greater than or equal to zero
      * indicates to the container the initialization priority of the
@@ -129,13 +118,12 @@ public abstract class ServletRegistration {
      * @throws IllegalStateException if the ServletContext from which this
      * ServletRegistration was obtained has already been initialized
      */
-    public void setLoadOnStartup(int loadOnStartup) {
-        this.loadOnStartup = loadOnStartup;
-    }
+    public void setLoadOnStartup(int loadOnStartup);
 
 
     /*
-     * Configures the servlet as supporting asynchronous operations or not.
+     * Configures the servlet for which this ServletRegistration was
+     * created as supporting asynchronous operations or not.
      *
      * <p>By default, a servlet does not support asynchronous operations.
      *
@@ -147,14 +135,12 @@ public abstract class ServletRegistration {
      * @throws IllegalStateException if the ServletContext from which this
      * ServletRegistration was obtained has already been initialized
      */
-    public void setAsyncSupported(boolean isAsyncSupported) {
-        this.isAsyncSupported = isAsyncSupported;
-    }
+    public void setAsyncSupported(boolean isAsyncSupported);
 
 
     /**
      * Adds a servlet mapping with the given URL patterns for the servlet
-     * represented by this ServletRegistration.
+     * for which this ServletRegistration was created.
      *
      * @param urlPatterns the URL patterns of the servlet mapping
      *
@@ -163,6 +149,6 @@ public abstract class ServletRegistration {
      * @throws IllegalStateException if the ServletContext from which this
      * ServletRegistration was obtained has already been initialized
      */
-    public abstract void addMapping(String... urlPatterns);
+    public void addMapping(String... urlPatterns);
 }
 
