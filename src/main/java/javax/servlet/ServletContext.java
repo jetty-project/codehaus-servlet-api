@@ -91,6 +91,8 @@ import java.util.Set;
 
 public interface ServletContext {
 
+    public static final String TEMPDIR = "javax.servlet.context.tempdir";
+    
     /**
      * Returns the context path of the web application.
      *
