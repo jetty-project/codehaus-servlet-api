@@ -76,13 +76,6 @@ import java.io.IOException;
  
 public interface RequestDispatcher {
 
-    public static final String ERROR_EXCEPTION = "javax.servlet.error.exception";
-    public static final String ERROR_EXCEPTION_TYPE = "javax.servlet.error.exception_type";
-    public static final String ERROR_MESSAGE = "javax.servlet.error.message";
-    public static final String ERROR_REQUEST_URI = "javax.servlet.error.request_uri";
-    public static final String ERROR_SERVLET_NAME = "javax.servlet.error.servlet_name";
-    public static final String ERROR_STATUS_CODE = "javax.servlet.error.status_code";
-    
     /**
      * The name of the request attribute under which the original
      * request URI is made available to the target of a 
@@ -152,6 +145,44 @@ public interface RequestDispatcher {
      * include} is stored
      */
     static final String INCLUDE_QUERY_STRING = "javax.servlet.include.query_string";
+
+    /**
+     * The name of the request attribute under which the exception object
+     * is propagated during an error dispatch
+     */
+    public static final String ERROR_EXCEPTION = "javax.servlet.error.exception";
+
+    /**
+     * The name of the request attribute under which the type of the
+     * exception object is propagated during an error dispatch
+     */
+    public static final String ERROR_EXCEPTION_TYPE = "javax.servlet.error.exception_type";
+
+    /**
+     * The name of the request attribute under which the exception message
+     * is propagated during an error dispatch
+     */
+    public static final String ERROR_MESSAGE = "javax.servlet.error.message";
+
+    /**
+     * The name of the request attribute under which the request URI
+     * whose processing caused the error is propagated during an error
+     * dispatch
+     */
+    public static final String ERROR_REQUEST_URI = "javax.servlet.error.request_uri";
+
+    /**
+     * The name of the request attribute under which the name of the servlet
+     * in which the error occurred is propagated during an error dispatch
+     */
+    public static final String ERROR_SERVLET_NAME = "javax.servlet.error.servlet_name";
+
+    /**
+     * The name of the request attribute under which the response status
+     * is propagated during an error dispatch
+     */
+    public static final String ERROR_STATUS_CODE = "javax.servlet.error.status_code";
+
 
     /**
      * Forwards a request from

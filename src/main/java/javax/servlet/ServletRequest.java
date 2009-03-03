@@ -659,6 +659,9 @@ public interface ServletRequest {
      * {@link AsyncContext#complete} is called on the returned
      * {@link AsyncContext}, or the AsyncContext times out.
      *
+     * <p>The timer for async timeouts will not start until this request
+     * and its associated response have returned from the container.
+     *
      * <p>If a timeout occurs and none of the
      * {@link AsyncListener#onTimeout(AsyncEvent)} handlers call
      * {@link AsyncContext#complete} or one of the
@@ -707,6 +710,9 @@ public interface ServletRequest {
      * <p>This will delay committal of the response until
      * {@link AsyncContext#complete} is called on the returned
      * {@link AsyncContext}, or the AsyncContext times out.
+     *
+     * <p>The timer for async timeouts will not start until this request
+     * and its associated response have returned from the container.
      *
      * <p>If a timeout occurs and none of the
      * {@link AsyncListener#onTimeout(AsyncEvent)} handlers call
@@ -766,6 +772,10 @@ public interface ServletRequest {
      * <p>A ServletRequest is put into asynchronous mode by calling
      * {@link #startAsync} or
      * {@link #startAsync(ServletRequest,ServletResponse)} on it.
+     * 
+     * <p>If this request has been redispatched using one of the
+     * {@link AsyncContext#dispatch} methods since it was put into
+     * asynchronous mode, this method returns <tt>false</tt>.
      *
      * @return true if this request has been put into asynchronous mode,
      * false otherwise

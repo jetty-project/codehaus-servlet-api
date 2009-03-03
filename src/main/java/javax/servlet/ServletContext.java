@@ -91,8 +91,13 @@ import java.util.Set;
 
 public interface ServletContext {
 
+    /**
+     * The name of the <tt>ServletContext</tt> attribute which stores
+     * the private temporary directory (of type <tt>java.io.File</tt>)
+     * provided by the servlet container for the <tt>ServletContext</tt>
+     */
     public static final String TEMPDIR = "javax.servlet.context.tempdir";
-    
+
     /**
      * Returns the context path of the web application.
      *
@@ -662,6 +667,29 @@ public interface ServletContext {
                                           String className);
 
 
+    /*
+     * Adds the servlet with the given name and class type to this servlet
+     * context.
+     *
+     * <p>The registered servlet may be further configured via the returned
+     * {@link ServletRegistration} object.
+     *
+     * @param servletName the name of the servlet
+     * @param servletClass the class object from which the servlet will be
+     * instantiated
+     *
+     * @return a ServletRegistration object that may be used to further
+     * configure the registered servlet, or <tt>null</tt> if this
+     * ServletContext already contains a servlet with a matching name
+     * @throws IllegalStateException if this ServletContext has already
+     * been initialized
+     *
+     * @since 3.0
+     */
+    public ServletRegistration addServlet(String servletName,
+        Class <? extends Servlet> servletClass);
+
+
     /**
      * Gets the ServletRegistration corresponding to the servlet with the
      * given <tt>servletName</tt>.
@@ -678,6 +706,9 @@ public interface ServletContext {
     /**
      * Adds the filter with the given name and class name to this servlet
      * context.
+     *
+     * <p>The registered filter may be further configured via the returned
+     * {@link FilterRegistration} object.
      *
      * <p>The specified <tt>className</tt> will be loaded using the 
      * classloader associated with the application represented by this
@@ -698,6 +729,29 @@ public interface ServletContext {
          
 
     /**
+     * Adds the filter with the given name and class type to this servlet
+     * context.
+     *
+     * <p>The registered filter may be further configured via the returned
+     * {@link FilterRegistration} object.
+     *
+     * @param filterName the name of the filter
+     * @param filterClass the class object from which the filter will be
+     * instantiated
+     *
+     * @return a FilterRegistration object that may be used to further
+     * configure the registered filter, or <tt>null</tt> if this
+     * ServletContext already contains a filter with a matching name
+     * @throws IllegalStateException if this ServletContext has already
+     * been initialized
+     *
+     * @since 3.0
+     */
+    public FilterRegistration addFilter(String filterName,
+        Class <? extends Filter> filterClass);
+
+
+    /**
      * Gets the FilterRegistration corresponding to the filter with the
      * given <tt>filterName</tt>.
      *
@@ -711,32 +765,21 @@ public interface ServletContext {
 
 
     /**
-     * Sets the session tracking cookie configuration for this 
-     * <tt>ServletContext</tt>.
+     * Gets the {@link SessionCookieConfig} object through which various
+     * properties of the session tracking cookies created on behalf of this
+     * <tt>ServletContext</tt> may be configured.
      *
-     * <p>The given <tt>SessionCookieConfig</tt> replaces any
-     * session tracking cookie configuration that was previously set.
+     * <p>Repeated invocations of this method will return the same
+     * <tt>SessionCookieConfig</tt> instance.
      *
-     * @param sessionCookieConfig 
-     * @throws IllegalStateException if this <tt>ServletContext</tt> has
-     * already been initialized
-     *
-     * @since 3.0
-     */
-    public void setSessionCookieConfig(SessionCookieConfig sessionCookieConfig);
-
-
-    /**
-     * Gets the session tracking cookie configuration of this 
-     * <tt>ServletContext</tt>.
-     *
-     * @return the session tracking cookie configuration of this 
-     * <tt>ServletContext</tt>, or <tt>null</tt> if no such configuration
-     * was ever set for this <tt>ServletContext</tt>
+     * @return the <tt>SessionCookieConfig</tt> object through which
+     * various properties of the session tracking cookies created on
+     * behalf of this <tt>ServletContext</tt> may be configured
      *
      * @since 3.0
      */
     public SessionCookieConfig getSessionCookieConfig();
+
 
 
     /**
