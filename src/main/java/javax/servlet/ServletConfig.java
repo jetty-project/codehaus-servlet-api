@@ -52,66 +52,50 @@
  * limitations under the License.
  */
 
-
-
 package javax.servlet;
 
 import java.util.Enumeration;
-
-
+import java.util.Iterator;
 
 /**
- * 
  * A servlet configuration object used by a servlet container
  * to pass information to a servlet during initialization. 
- *
  */
- 
-public interface ServletConfig {
+ public interface ServletConfig {
     
-
     /**
      * Returns the name of this servlet instance.
      * The name may be provided via server administration, assigned in the 
      * web application deployment descriptor, or for an unregistered (and thus
      * unnamed) servlet instance it will be the servlet's class name.
      *
-     * @return		the name of the servlet instance
-     *
-     *
-     *
+     * @return	the name of the servlet instance
      */
-
     public String getServletName();
+
 
     /**
      * Returns a reference to the {@link ServletContext} in which the caller
      * is executing.
      *
-     *
-     * @return		a {@link ServletContext} object, used
-     *			by the caller to interact with its servlet 
-     *                  container
+     * @return	a {@link ServletContext} object, used
+     * by the caller to interact with its servlet container
      * 
-     * @see		ServletContext
-     *
+     * @see ServletContext
      */
-
     public ServletContext getServletContext();
+
     
     /**
-     * Returns a <code>String</code> containing the value of the 
-     * named initialization parameter, or <code>null</code> if 
-     * the parameter does not exist.
+     * Gets the value of the initialization parameter with the given name.
      *
-     * @param name	a <code>String</code> specifying the name
-     *			of the initialization parameter
+     * @param name the name of the initialization parameter whose value to
+     * get
      *
-     * @return		a <code>String</code> containing the value 
-     *			of the initialization parameter
-     *
+     * @return a <code>String</code> containing the value 
+     * of the initialization parameter, or <code>null</code> if 
+     * the initialization parameter does not exist
      */
-
     public String getInitParameter(String name);
 
 
@@ -121,15 +105,33 @@ public interface ServletConfig {
      * or an empty <code>Enumeration</code> if the servlet has
      * no initialization parameters.
      *
-     * @return		an <code>Enumeration</code> of <code>String</code> 
-     *			objects containing the names of the servlet's 
-     *			initialization parameters
-     *
-     *
-     *
+     * @return an <code>Enumeration</code> of <code>String</code> 
+     * objects containing the names of the servlet's 
+     * initialization parameters
      */
+    public Enumeration<String> getInitParameterNames();
 
-    public Enumeration getInitParameterNames();
 
+    /**
+     * Gets the value of the initialization attribute with the given name.
+     *
+     * @param name the name of the initialization attribute whose value to
+     * get
+     *
+     * @return the value of the initialization attribute with the given
+     * name, or <tt>null</tt> if the servlet does not have any
+     * initialization attribute with that name
+     */
+    public Object getInitAttribute(String name);
+
+
+    /**
+     * Gets the names of the initialization attributes of the servlet.
+     *
+     * @return the names of the initialization attributes of the servlet,
+     * or an empty <tt>Iterable</tt> if the servlet does not have
+     * any initialization attributes.
+     */
+    public Iterable<String> getInitAttributeNames();
 
 }

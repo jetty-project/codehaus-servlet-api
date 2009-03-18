@@ -220,7 +220,7 @@ public interface ServletContext {
      * 
      * @since 2.3
      */    
-    public Set getResourcePaths(String path);
+    public Set<String> getResourcePaths(String path);
     
 
     /**
@@ -384,7 +384,7 @@ public interface ServletContext {
      * will be permanently removed in a future version of the Java
      * Servlet API.
      */
-    public Enumeration getServlets();
+    public Enumeration<Servlet> getServlets();
     
 
     /**
@@ -397,7 +397,7 @@ public interface ServletContext {
      * remains only to preserve binary compatibility. This method will 
      * be permanently removed in a future version of the Java Servlet API.
      */
-    public Enumeration getServletNames();
+    public Enumeration<String> getServletNames();
     
 
     /**
@@ -517,7 +517,7 @@ public interface ServletContext {
      *
      * @see ServletConfig#getInitParameter
      */
-    public Enumeration getInitParameterNames();
+    public Enumeration<String> getInitParameterNames();
     
 
     /**
@@ -582,7 +582,7 @@ public interface ServletContext {
      *
      * @see		#getAttribute
      */
-    public Enumeration getAttributeNames();
+    public Enumeration<String> getAttributeNames();
     
     
     /**
@@ -668,6 +668,33 @@ public interface ServletContext {
 
 
     /*
+     * Registers the given servlet instance with this ServletContext
+     * under the given <tt>servletName</tt>.
+     *
+     * <p>The registered servlet may be further configured via the returned
+     * {@link ServletRegistration} object.
+     *
+     * @param servletName the name of the servlet
+     * @param servlet the servlet instance to register
+     *
+     * @return a ServletRegistration object that may be used to further
+     * configure the given servlet, or <tt>null</tt> if this
+     * ServletContext already contains a servlet with a matching name,
+     * or if the same servlet instance has already been registered with
+     * this or another ServletContext that is part of the same servlet
+     * container
+     * @throws IllegalStateException if this ServletContext has already
+     * been initialized
+     * @throws IllegalArgumentException if the given servlet instance 
+     * implements {@link SingleThreadModel}
+     *
+     * @since 3.0
+     */
+    public ServletRegistration addServlet(String servletName,
+                                          Servlet servlet);
+
+
+    /*
      * Adds the servlet with the given name and class type to this servlet
      * context.
      *
@@ -727,6 +754,30 @@ public interface ServletContext {
      */
     public FilterRegistration addFilter(String filterName, String className);
          
+
+    /*
+     * Registers the given filter instance with this ServletContext
+     * under the given <tt>filterName</tt>.
+     *
+     * <p>The registered filter may be further configured via the returned
+     * {@link FilterRegistration} object.
+     *
+     * @param filterName the name of the filter
+     * @param filter the filter instance to register
+     *
+     * @return a FilterRegistration object that may be used to further
+     * configure the given filter, or <tt>null</tt> if this
+     * ServletContext already contains a filter with a matching name,
+     * or if the same filter instance has already been registered with
+     * this or another ServletContext that is part of the same servlet
+     * container
+     * @throws IllegalStateException if this ServletContext has already
+     * been initialized
+     *
+     * @since 3.0
+     */
+    public FilterRegistration addFilter(String filterName, Filter filter);
+
 
     /**
      * Adds the filter with the given name and class type to this servlet
@@ -790,7 +841,7 @@ public interface ServletContext {
      * session tracking modes set by a previous invocation of this
      * method on this <tt>ServletContext</tt>.
      *
-     * @param sessionTrackingModes enum set of session tracking modes to
+     * @param sessionTrackingModes the set of session tracking modes to
      * become effective for this <tt>ServletContext</tt>
      *
      * @throws IllegalStateException if this <tt>ServletContext</tt> has
@@ -803,19 +854,19 @@ public interface ServletContext {
      *
      * @since 3.0
      */
-    public void setSessionTrackingModes(EnumSet<SessionTrackingMode> sessionTrackingModes);
+    public void setSessionTrackingModes(Set<SessionTrackingMode> sessionTrackingModes);
 
 
     /**
      * Gets the session tracking modes that are supported by default for this
      * <tt>ServletContext</tt>.
      *
-     * @return enum set of the session tracking modes supported by default for
+     * @return set of the session tracking modes supported by default for
      * this <tt>ServletContext</tt>
      *
      * @since 3.0
      */
-    public EnumSet<SessionTrackingMode> getDefaultSessionTrackingModes();
+    public Set<SessionTrackingMode> getDefaultSessionTrackingModes();
 
 
     /**
@@ -829,12 +880,12 @@ public interface ServletContext {
      * {@link #getDefaultSessionTrackingModes getDefaultSessionTrackingModes}
      * are in effect.
      *
-     * @return enum set of the session tracking modes in effect for this
+     * @return set of the session tracking modes in effect for this
      * <tt>ServletContext</tt>
      *
      * @since 3.0
      */
-    public EnumSet<SessionTrackingMode> getEffectiveSessionTrackingModes();
+    public Set<SessionTrackingMode> getEffectiveSessionTrackingModes();
 
 }
 

@@ -42,6 +42,11 @@ public interface SessionCookieConfig {
      * cookies created on behalf of the <tt>ServletContext</tt> from
      * which this <tt>SessionCookieConfig</tt> was acquired.
      *
+     * <p>NOTE: Changing the name of session tracking cookies may break
+     * other tiers (for example, a load balancing frontend) that assume
+     * the cookie name to be equal to the default <tt>JSESSIONID</tt>,
+     * and therefore should only be done cautiously.
+     *
      * @param name the cookie name to use
      *
      * @throws IllegalStateException if the <tt>ServletContext</tt>
@@ -246,4 +251,35 @@ public interface SessionCookieConfig {
      * @see ServletRequest#isSecure()
      */
     public boolean isSecure();
+
+
+    /**
+     * Sets the lifetime (in seconds) for the session tracking cookies
+     * created on behalf of the <tt>ServletContext</tt> from which this
+     * <tt>SessionCookieConfig</tt> was acquired.
+     *
+     * @param maxAge the lifetime (in seconds) of the session tracking
+     * cookies created on behalf of the <tt>ServletContext</tt> from which
+     * this <tt>SessionCookieConfig</tt> was acquired.
+     *
+     * @see javax.servlet.http.Cookie#setMaxAge
+     */
+    public void setMaxAge(int maxAge);
+
+
+    /**
+     * Gets the lifetime (in seconds) of the session tracking cookies
+     * created on behalf of the <tt>ServletContext</tt> from which this
+     * <tt>SessionCookieConfig</tt> was acquired.
+     *
+     * <p>By default, <tt>-1</tt> is returned.
+     *
+     * @return the lifetime (in seconds) of the session tracking
+     * cookies created on behalf of the <tt>ServletContext</tt> from which
+     * this <tt>SessionCookieConfig</tt> was acquired, or <tt>-1</tt> (the
+     * default)
+     *
+     * @see javax.servlet.http.Cookie#getMaxAge
+     */
+    public int getMaxAge();
 }

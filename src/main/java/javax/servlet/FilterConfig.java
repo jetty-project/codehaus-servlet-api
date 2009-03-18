@@ -52,61 +52,50 @@
  * limitations under the License.
  */
 
-
-
-
 package javax.servlet;
-
 
 import java.util.Enumeration;
 
-	 /** 
-	 *
-	 * A filter configuration object used by a servlet container
-	 * to pass information to a filter during initialization.
-	 * @see Filter 
-	  * @since	Servlet 2.3
-	 *
-	 */
-
-
+/** 
+ * A filter configuration object used by a servlet container
+ * to pass information to a filter during initialization.
+ *
+ * @see Filter 
+ * @since Servlet 2.3
+ */
 public interface FilterConfig {
 
-	/** 
-	* Returns the filter-name of this filter as defined in the deployment descriptor. 
-	*/
-	
-	public String getFilterName();
+    /** 
+     * Returns the filter-name of this filter as defined in the deployment
+     * descriptor. 
+     */
+    public String getFilterName();
 
 
- /**
+    /**
      * Returns a reference to the {@link ServletContext} in which the caller
      * is executing.
      *
-     *
-     * @return		a {@link ServletContext} object, used
-     *			by the caller to interact with its servlet 
-     *                  container
+     * @return a {@link ServletContext} object, used by the caller to
+     * interact with its servlet container
      * 
-     * @see		ServletContext
-     *
+     * @see ServletContext
      */
-
     public ServletContext getServletContext();
     
+
     /**
      * Returns a <code>String</code> containing the value of the 
      * named initialization parameter, or <code>null</code> if 
-     * the parameter does not exist.
+     * the initialization parameter does not exist.
      *
-     * @param name	a <code>String</code> specifying the name
-     *			of the initialization parameter
+     * @param name a <code>String</code> specifying the name of the
+     * initialization parameter
      *
-     * @return		a <code>String</code> containing the value 
-     *			of the initialization parameter
-     *
+     * @return a <code>String</code> containing the value of the
+     * initialization parameter, or <code>null</code> if 
+     * the initialization parameter does not exist
      */
-
     public String getInitParameter(String name);
 
 
@@ -116,17 +105,32 @@ public interface FilterConfig {
      * or an empty <code>Enumeration</code> if the filter has
      * no initialization parameters.
      *
-     * @return		an <code>Enumeration</code> of <code>String</code> 
-     *			objects containing the names of the filter's 
-     *			initialization parameters
-     *
-     *
-     *
+     * @return an <code>Enumeration</code> of <code>String</code> objects
+     * containing the names of the filter's initialization parameters
      */
-
-    public Enumeration getInitParameterNames();
-
+    public Enumeration<String> getInitParameterNames();
 
 
+    /**
+     * Gets the value of the initialization attribute with the given name.
+     *
+     * @param name the name of the initialization attribute whose value to
+     * get
+     *
+     * @return the value of the initialization attribute with the given
+     * name, or <tt>null</tt> if the filter does not have any
+     * initialization attribute with that name
+     */
+    public Object getInitAttribute(String name);
+
+
+    /**
+     * Gets the names of the initialization attributes of the filter.
+     *
+     * @return the names of the initialization attributes of the filter,
+     * or an empty <tt>Iterable</tt> if the filter does not have
+     * any initialization attributes.
+     */
+    public Iterable<String> getInitAttributeNames();
 
 }

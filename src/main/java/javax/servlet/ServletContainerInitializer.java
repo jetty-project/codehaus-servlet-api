@@ -33,77 +33,37 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  *
- *
- * This file incorporates work covered by the following copyright and
- * permission notice:
- *
- * Copyright 2004 The Apache Software Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 
+package javax.servlet;
 
 
-package javax.servlet.http;
-
-import java.util.Enumeration;
+import java.util.Set;
 
 /**
+ * An implementation of this interface can be provided by a library /
+ * runtime to get notified by the container for the classes / interfaces 
+ * that it expresses interest via the <tt>@HandlesTypes</tt> annotation. If
+ * there is no <tt>@HandlesTypes</tt> annotation on an implementation of this
+ * interface, the container MUST invoke the <tt>onStartup</tt> method once for
+ * every webapp passing it a <tt>null</tt> set of classes.
  *
- * @author		Various
+ * @see javax.servlet.annotation.HandlesTypes
  *
- * @deprecated		As of Java(tm) Servlet API 2.1
- *			for security reasons, with no replacement.
- *			This interface will be removed in a future
- *			version of this API.
- *
- * @see			HttpSession
- * @see			HttpSessionBindingEvent
- * @see			HttpSessionBindingListener
- *
+ * @since 3.0
  */
-
-
-public interface HttpSessionContext {
-
+public interface ServletContainerInitializer {
     /**
      *
-     * @deprecated 	As of Java Servlet API 2.1 with
-     *			no replacement. This method must 
-     *			return null and will be removed in
-     *			a future version of this API.
+     * @param c The set of classes that an implementation of ServletContainerInitializer expressed interest on
+     * via the <tt>HandlesTypes</tt> annotation. If there is no <tt>HandlesTypes</tt> annotation on the implementation
+     * of the ServletContainerInitializer, a <tt>null</tt> set of classes will be passed
      *
+     * @param ctx The <tt>ServletContext</tt> instance in which the types defined via the <tt>HandlesTypes</tt>
+     * are found.
+     *
+     * @since 3.0 
      */
-
-    public HttpSession getSession(String sessionId);
-    
-    
-    
-  
-    /**
-     *
-     * @deprecated	As of Java Servlet API 2.1 with
-     *			no replacement. This method must return 
-     *			an empty <code>Enumeration</code> and will be removed
-     *			in a future version of this API.
-     *
-     */
-
-    public Enumeration<String> getIds();
+    public void onStartup(Set<Class<?>> c, ServletContext ctx); 
 }
-
-
-
-
-

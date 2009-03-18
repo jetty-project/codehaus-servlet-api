@@ -52,8 +52,6 @@
  * limitations under the License.
  */
 
-
-
 package javax.servlet.http;
 
 import java.util.Enumeration;
@@ -291,7 +289,7 @@ public interface HttpSession {
      *
      */
     
-    public Enumeration getAttributeNames();
+    public Enumeration<String> getAttributeNames();
     
     
     
@@ -449,10 +447,7 @@ public interface HttpSession {
      *					already invalidated session
      *
      */
-
     public boolean isNew();
-
-
 
 }
 

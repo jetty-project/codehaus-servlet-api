@@ -71,7 +71,7 @@ public interface FilterRegistration {
     public boolean setDescription(String description);
 
 
-    /*
+    /**
      * Sets the initialization parameter with the given name and value
      * on the filter for which this FilterRegistration was created.
      *
@@ -88,17 +88,17 @@ public interface FilterRegistration {
     public boolean setInitParameter(String name, String value);
 
 
-    /*
+    /**
      * Sets the given initialization parameters on the filter for which
      * this FilterRegistration was created.
      *
      * <p>The given map of initialization parameters is processed
      * <i>by-value</i>, i.e., for each initialization parameter contained
-     * in the map, this method calls {@link setInitParameter(String,String)}.
+     * in the map, this method calls {@link #setInitParameter(String,String)}.
      * If that method would return false for any of the
      * initialization parameters in the given map, no updates will be
      * performed, and false will be returned. Likewise, if the map contains
-     * an initialization parameter with a <tt>null</tt> name of value, no
+     * an initialization parameter with a <tt>null</tt> name or value, no
      * updates will be performed, and an IllegalArgumentException will be
      * thrown.
      *
@@ -114,11 +114,54 @@ public interface FilterRegistration {
     public boolean setInitParameters(Map<String, String> initParameters);
 
 
-    /*
+    /**
+     * Sets the initialization attribute with the given name and value
+     * on the filter for which this FilterRegistration was created.
+     *
+     * @param name the initialization attribute name
+     * @param value the initialization attribute value
+     *
+     * @return true if the update was successful, false otherwise
+     *
+     * @throws IllegalStateException if the ServletContext from which this
+     * FilterRegistration was obtained has already been initialized
+     * @throws IllegalArgumentException if the given name or value is
+     * <tt>null</tt>
+     */ 
+    public boolean setInitAttribute(String name, Object value);
+
+
+    /**
+     * Sets the given initialization attributes on the filter for which
+     * this FilterRegistration was created.
+     *
+     * <p>The given map of initialization attributes is processed
+     * <i>by-value</i>, i.e., for each initialization attribute contained
+     * in the map, this method calls {@link #setInitAttribute(String,Object)}.
+     * If that method would return false for any of the
+     * initialization attributes in the given map, no updates will be
+     * performed, and false will be returned. Likewise, if the map contains
+     * an initialization attribute with a <tt>null</tt> name or value, no
+     * updates will be performed, and an IllegalArgumentException will be
+     * thrown.
+     *
+     * @param initAttributes the initialization attributes
+     *
+     * @return true if the update was successful, false otherwise
+     *
+     * @throws IllegalStateException if the ServletContext from which this
+     * FilterRegistration was obtained has already been initialized
+     * @throws IllegalArgumentException if the given map contains an
+     * initialization attribute with a <tt>null</tt> name or value
+     */ 
+    public boolean setInitAttributes(Map<String, Object> initAttributes);
+
+
+    /**
      * Configures the filter for which this FilterRegistration was created
      * as supporting asynchronous operations or not.
      *
-     * <p>By default, a servlet does not support asynchronous operations.
+     * <p>By default, a filter does not support asynchronous operations.
      *
      * <p>A call to this method overrides any previous setting.
      *
