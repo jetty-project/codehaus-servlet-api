@@ -69,7 +69,7 @@ import java.util.Map;
  *
  * @see javax.servlet.ServletRequest
  *
- * @since 2.3
+ * @since Servlet 2.3
  */
 
 public class ServletRequestWrapper implements ServletRequest {
@@ -341,7 +341,7 @@ public class ServletRequestWrapper implements ServletRequest {
      * The default behavior of this method is to return
      * getRemotePort() on the wrapped request object.
      *
-     * @since 2.4
+     * @since Servlet 2.4
      */    
     public int getRemotePort(){
         return this.request.getRemotePort();
@@ -352,7 +352,7 @@ public class ServletRequestWrapper implements ServletRequest {
      * The default behavior of this method is to return
      * getLocalName() on the wrapped request object.
      *
-     * @since 2.4
+     * @since Servlet 2.4
      */
     public String getLocalName(){
         return this.request.getLocalName();
@@ -363,7 +363,7 @@ public class ServletRequestWrapper implements ServletRequest {
      * The default behavior of this method is to return
      * getLocalAddr() on the wrapped request object.
      *
-     * @since 2.4
+     * @since Servlet 2.4
      */       
     public String getLocalAddr(){
         return this.request.getLocalAddr();
@@ -374,7 +374,7 @@ public class ServletRequestWrapper implements ServletRequest {
      * The default behavior of this method is to return
      * getLocalPort() on the wrapped request object.
      *
-     * @since 2.4
+     * @since Servlet 2.4
      */
     public int getLocalPort(){
         return this.request.getLocalPort();
@@ -388,7 +388,7 @@ public class ServletRequestWrapper implements ServletRequest {
      * @return the servlet context to which the wrapped servlet request was
      * last dispatched
      *
-     * @since 3.0
+     * @since Servlet 3.0
      */
     public ServletContext getServletContext() {
         return request.getServletContext();
@@ -412,7 +412,7 @@ public class ServletRequestWrapper implements ServletRequest {
      *
      * @see ServletRequest#startAsync
      *
-     * @since 3.0
+     * @since Servlet 3.0
      */
     public AsyncContext startAsync() throws IllegalStateException {
         return request.startAsync();
@@ -441,7 +441,7 @@ public class ServletRequestWrapper implements ServletRequest {
      *
      * @see ServletRequest#startAsync(ServletRequest, ServletResponse)
      *
-     * @since 3.0
+     * @since Servlet 3.0
      */
     public AsyncContext startAsync(ServletRequest servletRequest,
                                    ServletResponse servletResponse)
@@ -458,7 +458,7 @@ public class ServletRequestWrapper implements ServletRequest {
      *
      * @see ServletRequest#isAsyncStarted
      *
-     * @since 3.0
+     * @since Servlet 3.0
      */
     public boolean isAsyncStarted() {
         return request.isAsyncStarted();
@@ -473,7 +473,7 @@ public class ServletRequestWrapper implements ServletRequest {
      *
      * @see ServletRequest#isAsyncSupported
      *
-     * @since 3.0
+     * @since Servlet 3.0
      */
     public boolean isAsyncSupported() {
         return request.isAsyncSupported();
@@ -497,7 +497,7 @@ public class ServletRequestWrapper implements ServletRequest {
      *
      * @see ServletRequest#getAsyncContext
      *
-     * @since 3.0
+     * @since Servlet 3.0
      */
     public AsyncContext getAsyncContext() {
         return request.getAsyncContext();
@@ -512,7 +512,7 @@ public class ServletRequestWrapper implements ServletRequest {
      *
      * @see ServletRequest#addAsyncListener(AsyncListener)
      *
-     * @since 3.0
+     * @since Servlet 3.0
      */
     public void addAsyncListener(AsyncListener listener) {
         request.addAsyncListener(listener);
@@ -533,7 +533,7 @@ public class ServletRequestWrapper implements ServletRequest {
      * @see ServletRequest#addAsyncListener(AsyncListener, ServletRequest,
      * ServletResponse)
      *
-     * @since 3.0
+     * @since Servlet 3.0
      */
     public void addAsyncListener(AsyncListener listener,
                                  ServletRequest servletRequest,
@@ -544,11 +544,10 @@ public class ServletRequestWrapper implements ServletRequest {
 
     /**
      * Sets the timeout (in milliseconds) for any asynchronous operations
-     * started on the wrapped request by a call to {@link #startAsync} or
-     * {@link #startAsync(ServletRequest, ServletResponse)}.
+     * initiated on the wrapped request.
      *
      * @param timeout the timeout in milliseconds for any asynchronous
-     * operations started on the wrapped request
+     * operations initiated on the wrapped request
      *
      * @throws IllegalStateException if called after {@link #startAsync},
      * unless within the scope of a dispatch resulting from an
@@ -556,10 +555,26 @@ public class ServletRequestWrapper implements ServletRequest {
      * 
      * @see ServletRequest#setAsyncTimeout
      *
-     * @since 3.0
+     * @since Servlet 3.0
      */
     public void setAsyncTimeout(long timeout) {
         request.setAsyncTimeout(timeout);
+    }
+
+
+    /**
+     * Gets the timeout (in milliseconds) for any asynchronous operations
+     * initiated on the wrapped request.
+     *
+     * @return the timeout in milliseconds for any asynchronous
+     * operations initiated on the wrapped request
+     * 
+     * @see ServletRequest#getAsyncTimeout
+     * 
+     * @since Servlet 3.0
+     */
+    public long getAsyncTimeout() {
+        return request.getAsyncTimeout();
     }
 
 
@@ -572,7 +587,7 @@ public class ServletRequestWrapper implements ServletRequest {
      * @return true if this ServletRequestWrapper wraps the
      * given ServletRequest instance, false otherwise
      *
-     * @since 3.0
+     * @since Servlet 3.0
      */
     public boolean isWrapperFor(ServletRequest wrapped) {
         if (request == wrapped) {
@@ -598,7 +613,7 @@ public class ServletRequestWrapper implements ServletRequest {
      * @throws IllegalArgumentException if the given class does not
      * implement {@link ServletRequest}
      *
-     * @since 3.0
+     * @since Servlet 3.0
      */
     public boolean isWrapperFor(Class wrappedType) {
         if (!ServletRequest.class.isAssignableFrom(wrappedType)) {
@@ -623,7 +638,7 @@ public class ServletRequestWrapper implements ServletRequest {
      * 
      * @see ServletRequest#getDispatcherType
      *
-     * @since 3.0
+     * @since Servlet 3.0
      */
     public DispatcherType getDispatcherType() {
         return request.getDispatcherType();
