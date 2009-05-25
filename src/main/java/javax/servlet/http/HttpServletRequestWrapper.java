@@ -301,12 +301,12 @@ public class HttpServletRequestWrapper extends ServletRequestWrapper implements 
 
 
     /**
-     * The default behavior of this method is to call login on the wrapped
-     * request object.
+     * The default behavior of this method is to call authenticate on the
+     * wrapped request object.
      */
-    public boolean login(HttpServletResponse response)
+    public boolean authenticate(HttpServletResponse response)
             throws IOException, ServletException {
-        return this._getHttpServletRequest().login(response);
+        return this._getHttpServletRequest().authenticate(response);
     }
 
 
@@ -327,4 +327,28 @@ public class HttpServletRequestWrapper extends ServletRequestWrapper implements 
     public void logout() throws ServletException {
         this._getHttpServletRequest().logout();
     }
+
+    /**
+     * Retrieves all the parts of the multi-part/form-data http message
+     *
+     * @return An <code>Iterable</code> for all the parts of the multi-part/form-data request
+     */
+    public Iterable<Part> getParts() {
+        return this._getHttpServletRequest().getParts(); 
+    }
+
+    /**
+     * Returns the part specified by the name.
+     *
+     * @param name the name of the part
+     * @return The part being requested for by name.
+     * @exception IllegalArgumentException If the name specified does not exist
+     *
+     */
+    public Part getPart(String name) throws IllegalArgumentException {
+        return this._getHttpServletRequest().getPart(name); 
+    
+    }
+
+
 }

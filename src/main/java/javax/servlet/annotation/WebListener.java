@@ -42,9 +42,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used to declare a WebListener
+ * This annotation is used to declare a WebListener.
+ *
+ * Any class annotated with WebListener must implement one or more of
+ * the {@link javax.servlet.ServletContextListener}, 
+ * {@link javax.servlet.ServletContextAttributeListener},
+ * {@link javax.servlet.ServletRequestListener},
+ * {@link javax.servlet.ServletRequestAttributeListener}, 
+ * {@link javax.servlet.http.HttpSessionListener}, or
+ * {@link javax.servlet.http.HttpSessionAttributeListener} interfaces.
  * 
- *@since Servlet 3.0
+ * @since Servlet 3.0
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

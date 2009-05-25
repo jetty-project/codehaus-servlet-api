@@ -471,12 +471,12 @@ public interface ServletContext {
      * appropriate to the computer and operating system on
      * which the servlet container is running, including the
      * proper path separators.
-     * Paths to resources located inside the <tt>/META-INF/resources</tt>
-     * directory of a JAR file inside the application's <tt>/WEB-INF/lib</tt>
-     * directory are returned using this format:
-     * <tt>&lt;absolute-file-path-on-disk&gt;/WEB-INF/lib/&lt;name-of-jar&gt;!/META-INF/resources/&lt;path&gt;</tt>,
-     * where <tt>&lt;path&gt;</tt> corresponds to the <tt>path</tt>
-     * argument passed to this method.
+     *
+     * <p>Resources inside the <tt>/META-INF/resources</tt>
+     * directories of JAR files bundled in the application's
+     * <tt>/WEB-INF/lib</tt> directory must be considered only if the
+     * container has unpacked them from their containing JAR file, in
+     * which case the path to the unpacked location must be returned.
      *
      * <p>This method returns <code>null</code> if the servlet container
      * is unable to translate the given <i>virtual</i> path to a
@@ -773,7 +773,25 @@ public interface ServletContext {
      *
      * @since Servlet 3.0
      */
-    public ServletRegistration findServletRegistration(String servletName);
+    public ServletRegistration getServletRegistration(String servletName);
+
+
+    /**
+     * Gets an immutable (and possibly empty) Map of the ServletRegistration
+     * objects (keyed by servlet name) corresponding to all servlets
+     * registered with this ServletContext.
+     *
+     * <p>The returned Map includes the ServletRegistration objects
+     * corresponding to all declared and annotated servlets, as well as the
+     * ServletRegistration objects corresponding to all servlets that have
+     * been added via one of the <tt>addServlet</tt> methods.
+     *
+     * @return Map of the ServletRegistration objects corresponding
+     * to all servlets currently registered with this ServletContext
+     *
+     * @since Servlet 3.0
+     */
+    public Map<String, ServletRegistration> getServletRegistrations();
 
 
     /**
@@ -882,7 +900,25 @@ public interface ServletContext {
      *
      * @since Servlet 3.0
      */
-    public FilterRegistration findFilterRegistration(String filterName);
+    public FilterRegistration getFilterRegistration(String filterName);
+
+
+    /**
+     * Gets an immutable (and possibly empty) Map of the FilterRegistration
+     * objects (keyed by filter name) corresponding to all filters
+     * registered with this ServletContext.
+     *
+     * <p>The returned Map includes the FilterRegistration objects
+     * corresponding to all declared and annotated filters, as well as the
+     * FilterRegistration objects corresponding to all filters that have
+     * been added via one of the <tt>addFilter</tt> methods.
+     *
+     * @return Map of the FilterRegistration objects corresponding
+     * to all filters currently registered with this ServletContext
+     *
+     * @since Servlet 3.0
+     */
+    public Map<String, FilterRegistration> getFilterRegistrations();
 
 
     /**
