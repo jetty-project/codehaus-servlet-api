@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 1997-2008 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 1997-2009 Sun Microsystems, Inc. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -59,8 +59,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.EnumSet;
+import java.util.EventListener;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.descriptor.JspConfigDescriptor;
 
 /**
  * Defines a set of methods that a servlet uses to communicate with its
@@ -97,6 +99,20 @@ public interface ServletContext {
      * provided by the servlet container for the <tt>ServletContext</tt>
      */
     public static final String TEMPDIR = "javax.servlet.context.tempdir";
+
+
+    /**
+     * The name of the <code>ServletContext</code> attribute whose value
+     * (of type <code>java.util.List&lt;java.lang.String&gt;</code>) contains
+     * the list of names of JAR files in <code>WEB-INF/lib</code> ordered by
+     * their web fragment names (with possible exclusions if
+     * <code>&lt;absolute-ordering&gt;</code> without any
+     * <code>&lt;others/&gt;</code> is being used), or null if no
+     * absolute or relative ordering has been specified
+     */
+    public static final String ORDERED_LIBS =
+        "javax.servlet.context.orderedLibs";
+
 
     /**
      * Returns the context path of the web application.
@@ -152,7 +168,7 @@ public interface ServletContext {
     
 
     /**
-     * Returns the major version of the Java Servlet API that this
+     * Returns the major version of the Servlet API that this
      * servlet container supports. All implementations that comply
      * with Version 3.0 must have this method return the integer 3.
      *
@@ -171,6 +187,38 @@ public interface ServletContext {
     public int getMinorVersion();
     
    
+    /**
+     * Gets the major version of the Servlet specification that the
+     * application represented by this ServletContext is based on.
+     *
+     * <p>The value returned may be different from {@link #getMajorVersion},
+     * which returns the major version of the Servlet specification
+     * supported by the Servlet container.
+     *
+     * @return the major version of the Servlet specification that the
+     * application represented by this ServletContext is based on
+     *
+     * @since Servlet 3.0
+     */
+    public int getEffectiveMajorVersion();
+    
+    
+    /**
+     * Gets the minor version of the Servlet specification that the
+     * application represented by this ServletContext is based on.
+     *
+     * <p>The value returned may be different from {@link #getMinorVersion},
+     * which returns the minor version of the Servlet specification
+     * supported by the Servlet container.
+     *
+     * @return the minor version of the Servlet specification that the
+     * application xrepresented by this ServletContext is based on
+     *
+     * @since Servlet 3.0
+     */
+    public int getEffectiveMinorVersion();
+
+
     /**
      * Returns the MIME type of the specified file, or <code>null</code> if 
      * the MIME type is not known. The MIME type is determined
@@ -558,9 +606,14 @@ public interface ServletContext {
      * name and value was set successfully on this ServletContext, and false
      * if it was not set because this ServletContext already contains a
      * context initialization parameter with a matching name
-     * @throws IllegalStateException if this ServletContext has already
-     * been initialized
      *
+     * @throws IllegalStateException if this ServletContext has already
+     * been initialized, or if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     * 
      * @since Servlet 3.0
      */
     public boolean setInitParameter(String name, String value);
@@ -665,7 +718,7 @@ public interface ServletContext {
     public String getServletContextName();
 
 
-    /*
+    /**
      * Adds the servlet with the given name and class name to this servlet
      * context.
      *
@@ -682,8 +735,13 @@ public interface ServletContext {
      * @return a ServletRegistration object that may be used to further
      * configure the registered servlet, or <tt>null</tt> if this
      * ServletContext already contains a servlet with a matching name
+     *
      * @throws IllegalStateException if this ServletContext has already
-     * been initialized
+     * been initialized, or if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
      *
      * @since Servlet 3.0
      */
@@ -691,7 +749,7 @@ public interface ServletContext {
         String servletName, String className);
 
 
-    /*
+    /**
      * Registers the given servlet instance with this ServletContext
      * under the given <tt>servletName</tt>.
      *
@@ -707,8 +765,14 @@ public interface ServletContext {
      * or if the same servlet instance has already been registered with
      * this or another ServletContext that is part of the same servlet
      * container
+     *
      * @throws IllegalStateException if this ServletContext has already
-     * been initialized
+     * been initialized, or if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
      * @throws IllegalArgumentException if the given servlet instance 
      * implements {@link SingleThreadModel}
      *
@@ -718,7 +782,7 @@ public interface ServletContext {
         String servletName, Servlet servlet);
 
 
-    /*
+    /**
      * Adds the servlet with the given name and class type to this servlet
      * context.
      *
@@ -732,8 +796,13 @@ public interface ServletContext {
      * @return a ServletRegistration object that may be used to further
      * configure the registered servlet, or <tt>null</tt> if this
      * ServletContext already contains a servlet with a matching name
+     *
      * @throws IllegalStateException if this ServletContext has already
-     * been initialized
+     * been initialized, or if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
      *
      * @since Servlet 3.0
      */
@@ -750,18 +819,23 @@ public interface ServletContext {
      * is registered with this ServletContext via a call to 
      * {@link #addServlet(String,Servlet)}.
      *
-     * @param c the Servlet class to instantiate
+     * @param clazz the Servlet class to instantiate
      *
      * @return the new Servlet instance
      *
      * @throws ServletException if an error occurs during the instantiation
      * of, or resource injection into the new Servlet
      *
+     * @throws IllegalStateException if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
      * @since Servlet 3.0
      */
-    public <T extends Servlet> T createServlet(Class<T> c)
+    public <T extends Servlet> T createServlet(Class<T> clazz)
         throws ServletException;
-
 
     /**
      * Gets the ServletRegistration corresponding to the servlet with the
@@ -771,13 +845,19 @@ public interface ServletContext {
      * given <tt>servletName</tt>, or null if no ServletRegistration exists
      * under that name in this ServletContext
      *
+     * @throws IllegalStateException if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
      * @since Servlet 3.0
      */
     public ServletRegistration getServletRegistration(String servletName);
 
 
     /**
-     * Gets an immutable (and possibly empty) Map of the ServletRegistration
+     * Gets a (possibly empty) Map of the ServletRegistration
      * objects (keyed by servlet name) corresponding to all servlets
      * registered with this ServletContext.
      *
@@ -786,12 +866,21 @@ public interface ServletContext {
      * ServletRegistration objects corresponding to all servlets that have
      * been added via one of the <tt>addServlet</tt> methods.
      *
+     * <p>Any changes to the returned Map must not affect this
+     * ServletContext.
+     *
      * @return Map of the ServletRegistration objects corresponding
      * to all servlets currently registered with this ServletContext
      *
+     * @throws IllegalStateException if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
      * @since Servlet 3.0
      */
-    public Map<String, ServletRegistration> getServletRegistrations();
+    public Map<String, ? extends ServletRegistration> getServletRegistrations();
 
 
     /**
@@ -811,8 +900,13 @@ public interface ServletContext {
      * @return a FilterRegistration object that may be used to further
      * configure the registered filter, or <tt>null</tt> if this
      * ServletContext already contains a filter with a matching name
+     *
      * @throws IllegalStateException if this ServletContext has already
-     * been initialized
+     * been initialized, or if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
      *
      * @since Servlet 3.0
      */
@@ -820,7 +914,7 @@ public interface ServletContext {
         String filterName, String className);
          
 
-    /*
+    /**
      * Registers the given filter instance with this ServletContext
      * under the given <tt>filterName</tt>.
      *
@@ -836,8 +930,13 @@ public interface ServletContext {
      * or if the same filter instance has already been registered with
      * this or another ServletContext that is part of the same servlet
      * container
+     *
      * @throws IllegalStateException if this ServletContext has already
-     * been initialized
+     * been initialized, or if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
      *
      * @since Servlet 3.0
      */
@@ -859,8 +958,13 @@ public interface ServletContext {
      * @return a FilterRegistration object that may be used to further
      * configure the registered filter, or <tt>null</tt> if this
      * ServletContext already contains a filter with a matching name
+     *
      * @throws IllegalStateException if this ServletContext has already
-     * been initialized
+     * been initialized, or if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
      *
      * @since Servlet 3.0
      */
@@ -877,16 +981,22 @@ public interface ServletContext {
      * is registered with this ServletContext via a call to 
      * {@link #addFilter(String,Filter)}.
      *
-     * @param c the Filter class to instantiate
+     * @param clazz the Filter class to instantiate
      *
      * @return the new Filter instance
      *
      * @throws ServletException if an error occurs during the instantiation
      * of, or resource injection into the new Filter
      *
+     * @throws IllegalStateException if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
      * @since Servlet 3.0
      */
-    public <T extends Filter> T createFilter(Class<T> c)
+    public <T extends Filter> T createFilter(Class<T> clazz)
         throws ServletException;
 
 
@@ -898,13 +1008,19 @@ public interface ServletContext {
      * given <tt>filterName</tt>, or null if no FilterRegistration exists
      * under that name in this ServletContext
      *
+     * @throws IllegalStateException if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
      * @since Servlet 3.0
      */
     public FilterRegistration getFilterRegistration(String filterName);
 
 
     /**
-     * Gets an immutable (and possibly empty) Map of the FilterRegistration
+     * Gets a (possibly empty) Map of the FilterRegistration
      * objects (keyed by filter name) corresponding to all filters
      * registered with this ServletContext.
      *
@@ -913,12 +1029,21 @@ public interface ServletContext {
      * FilterRegistration objects corresponding to all filters that have
      * been added via one of the <tt>addFilter</tt> methods.
      *
+     * <p>Any changes to the returned Map must not affect this
+     * ServletContext.
+     *
      * @return Map of the FilterRegistration objects corresponding
      * to all filters currently registered with this ServletContext
      *
+     * @throws IllegalStateException if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
      * @since Servlet 3.0
      */
-    public Map<String, FilterRegistration> getFilterRegistrations();
+    public Map<String, ? extends FilterRegistration> getFilterRegistrations();
 
 
     /**
@@ -933,10 +1058,15 @@ public interface ServletContext {
      * various properties of the session tracking cookies created on
      * behalf of this <tt>ServletContext</tt> may be configured
      *
+     * @throws IllegalStateException if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
      * @since Servlet 3.0
      */
     public SessionCookieConfig getSessionCookieConfig();
-
 
 
     /**
@@ -950,8 +1080,13 @@ public interface ServletContext {
      * @param sessionTrackingModes the set of session tracking modes to
      * become effective for this <tt>ServletContext</tt>
      *
-     * @throws IllegalStateException if this <tt>ServletContext</tt> has
-     * already been initialized
+     * @throws IllegalStateException if this ServletContext has already
+     * been initialized, or if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
      * @throws IllegalArgumentException if <tt>sessionTrackingModes</tt>
      * specifies a combination of <tt>SessionTrackingMode.SSL</tt> with a
      * session tracking mode other than <tt>SessionTrackingMode.SSL</tt>,
@@ -969,6 +1104,12 @@ public interface ServletContext {
      *
      * @return set of the session tracking modes supported by default for
      * this <tt>ServletContext</tt>
+     *
+     * @throws IllegalStateException if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
      *
      * @since Servlet 3.0
      */
@@ -989,10 +1130,245 @@ public interface ServletContext {
      * @return set of the session tracking modes in effect for this
      * <tt>ServletContext</tt>
      *
+     * @throws IllegalStateException if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
      * @since Servlet 3.0
      */
     public Set<SessionTrackingMode> getEffectiveSessionTrackingModes();
 
+
+    /**
+     * Adds the listener with the given class name to this ServletContext.
+     *
+     * <p>The class with the given name will be loaded using the
+     * classloader associated with the application represented by this
+     * ServletContext, and must implement one or more of the following
+     * interfaces:
+     * <ul>
+     * <li>{@link ServletContextAttributeListener}</tt>
+     * <li>{@link ServletRequestListener}</tt>
+     * <li>{@link ServletRequestAttributeListener}</tt>
+     * <li>{@link javax.servlet.http.HttpSessionListener}</tt>
+     * <li>{@link javax.servlet.http.HttpSessionAttributeListener}</tt>
+     * </ul>
+     *
+     * <p>If this ServletContext was passed to 
+     * {@link ServletContainerInitializer#onStartup}, then the class with
+     * the given name may also implement {@link ServletContextListener},
+     * in addition to the interfaces listed above.
+     *
+     * <p>As part of this method call, the container must load the class
+     * with the specified class name to ensure that it implements one of 
+     * the required interfaces.
+     *
+     * <p>If the class with the given name implements a listener interface
+     * whose invocation order corresponds to the declaration order (i.e.,
+     * if it implements {@link ServletRequestListener},
+     * {@link ServletContextListener}, or
+     * {@link javax.servlet.http.HttpSessionListener}),
+     * then the new listener will be added to the end of the ordered list of
+     * listeners of that interface.
+     *
+     * @param className the fully qualified class name of the listener
+     *
+     * @throws IllegalArgumentException if the class with the given name
+     * does not implement any of the above interfaces, or if it implements
+     * {@link ServletContextListener} and this ServletContext was not
+     * passed to {@link ServletContainerInitializer#onStartup}
+     *
+     * @throws IllegalStateException if this ServletContext has already
+     * been initialized, or if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
+     * @since Servlet 3.0
+     */
+    public void addListener(String className);
+
+
+    /**
+     * Adds the given listener to this ServletContext.
+     *
+     * <p>The given listener must be an instance of one or more of the
+     * following interfaces:
+     * <ul>
+     * <li>{@link ServletContextAttributeListener}</tt>
+     * <li>{@link ServletRequestListener}</tt>
+     * <li>{@link ServletRequestAttributeListener}</tt>
+     * <li>{@link javax.servlet.http.HttpSessionListener}</tt>
+     * <li>{@link javax.servlet.http.HttpSessionAttributeListener}</tt>
+     * </ul>
+     *
+     * <p>If this ServletContext was passed to 
+     * {@link ServletContainerInitializer#onStartup}, then the given
+     * listener may also be an instance of {@link ServletContextListener},
+     * in addition to the interfaces listed above.
+     *
+     * <p>If the given listener is an instance of a listener interface whose
+     * invocation order corresponds to the declaration order (i.e., if it
+     * is an instance of {@link ServletRequestListener},
+     * {@link ServletContextListener}, or
+     * {@link javax.servlet.http.HttpSessionListener}),
+     * then the listener will be added to the end of the ordered list of
+     * listeners of that interface.
+     *
+     * @param t the listener to be added
+     *
+     * @throws IllegalArgumentException if the given listener is not
+     * an instance of any of the above interfaces, or if it is an instance
+     * of {@link ServletContextListener} and this ServletContext was not
+     * passed to {@link ServletContainerInitializer#onStartup}
+     *
+     * @throws IllegalStateException if this ServletContext has already
+     * been initialized, or if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
+     * @since Servlet 3.0
+     */
+    public <T extends EventListener> void addListener(T t);
+
+
+    /**
+     * Adds a listener of the given class type to this ServletContext.
+     *
+     * <p>The given <tt>listenerClass</tt> must implement one or more of the
+     * following interfaces:
+     * <ul>
+     * <li>{@link ServletContextAttributeListener}</tt>
+     * <li>{@link ServletRequestListener}</tt>
+     * <li>{@link ServletRequestAttributeListener}</tt>
+     * <li>{@link javax.servlet.http.HttpSessionListener}</tt>
+     * <li>{@link javax.servlet.http.HttpSessionAttributeListener}</tt>
+     * </ul>
+     *
+     * <p>If this ServletContext was passed to 
+     * {@link ServletContainerInitializer#onStartup}, then the given
+     * <tt>listenerClass</tt> may also implement
+     * {@link ServletContextListener}, in addition to the interfaces listed
+     * above.
+     *
+     * <p>If the given <tt>listenerClass</tt<> implements a listener
+     * interface whose invocation order corresponds to the declaration order
+     * (i.e., if it implements {@link ServletRequestListener},
+     * {@link ServletContextListener}, or
+     * {@link javax.servlet.http.HttpSessionListener}),
+     * then the new listener will be added to the end of the ordered list
+     * of listeners of that interface.
+     *
+     * @param listenerClass the listener class to be instantiated
+     *
+     * @throws IllegalArgumentException if the given <tt>listenerClass</tt>
+     * does not implement any of the above interfaces, or if it implements
+     * {@link ServletContextListener} and this ServletContext was not passed
+     * to {@link ServletContainerInitializer#onStartup}
+     *
+     * @throws IllegalStateException if this ServletContext has already
+     * been initialized, or if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
+     * @since Servlet 3.0
+     */
+    public void addListener(Class <? extends EventListener> listenerClass);
+
+
+    /**
+     * Instantiates the given EventListener class and performs any
+     * required resource injection into the new EventListener instance
+     * before returning it.
+     *
+     * <p>The specified EventListener class must implement at least one of
+     * the <code>{@link ServletContextListener}</code>,
+     * <code>{@link ServletContextAttributeListener}</code>,
+     * <code>{@link ServletRequestListener}</code>,
+     * <code>{@link ServletRequestAttributeListener}</code>,
+     * <code>{@link javax.servlet.http.HttpSessionListener}</code>, or
+     * <code>{@link javax.servlet.http.HttpSessionAttributeListener}</code>
+     * interfaces.
+     *
+     * <p>The returned EventListener instance may be further customized
+     * before it is registered with this ServletContext via a call to
+     * {@link #addListener(EventListener)}.
+     *
+     * @param clazz the EventListener class to instantiate
+     *
+     * @return the new EventListener instance
+     *
+     * @throws ServletException if an error occurs during the instantiation
+     * of, or resource injection into the new EventListener
+     *
+     * @throws IllegalStateException if this ServletContext was passed to the
+     * {@link ServletContextListener#contextInitialized} method of a
+     * {@link ServletContextListener} that was not declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, or annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
+     * @throws IllegalArgumentException if the specified EventListener class
+     * does not implement any of the
+     * <code>{@link ServletContextListener}</code>,
+     * <code>{@link ServletContextAttributeListener}</code>,
+     * <code>{@link ServletRequestListener}</code>,
+     * <code>{@link ServletRequestAttributeListener}</code>,
+     * <code>{@link javax.servlet.http.HttpSessionListener}</code>, or
+     * <code>{@link javax.servlet.http.HttpSessionAttributeListener}</code>
+     * interfaces.
+     *
+     * @since Servlet 3.0
+     */
+    public <T extends EventListener> T createListener(Class<T> clazz)
+        throws ServletException; 
+
+
+    /**
+     * Gets the <code>&lt;jsp-config&gt;</code> related configuration
+     * that was aggregated from the <code>web.xml</code> and
+     * <code>web-fragment.xml</code> descriptor files of the web application
+     * represented by this ServletContext.
+     *
+     * @return the <code>&lt;jsp-config&gt;</code> related configuration
+     * that was aggregated from the <code>web.xml</code> and
+     * <code>web-fragment.xml</code> descriptor files of the web application
+     * represented by this ServletContext, or null if no such configuration
+     * exists
+     *
+     * @see javax.servlet.descriptor.JspConfigDescriptor
+     *
+     * @since Servlet 3.0
+     */
+    public JspConfigDescriptor getJspConfigDescriptor();
+
+
+    /**
+     * Gets the class loader of the web application represented by this
+     * ServletContext.
+     *
+     * <p>If a security manager exists, and the caller's class loader
+     * is not the same as, or an ancestor of the requested class loader,
+     * then the security manager's <code>checkPermission</code> method is
+     * called with a <code>RuntimePermission("getClassLoader")</code>
+     * permission to check whether access to the requested class loader
+     * should be granted.
+     *
+     * @return the class loader of the web application represented by this
+     * ServletContext
+     *
+     * @throws SecurityException if a security manager denies access to 
+     * the requested class loader
+     *
+     * @since Servlet 3.0
+     */
+    public ClassLoader getClassLoader();
 }
 
 
