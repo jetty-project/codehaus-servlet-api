@@ -743,12 +743,28 @@ public interface ServletContext {
      * classloader associated with the application represented by this
      * ServletContext.
      *
+     * <p>If this ServletContext already contains a preliminary
+     * ServletRegistration for a servlet with the given <tt>servletName</tt>,
+     * it will be completed (by assigning the given <tt>className</tt> to it)
+     * and returned.
+     *
+     * <p>This method introspects the class with the given <tt>className</tt>
+     * for the {@link javax.servlet.annotation.ServletSecurity}, 
+     * {@link javax.servlet.annotation.MultipartConfig},
+     * <tt>javax.annotation.security.RunAs</tt>, and
+     * <tt>javax.annotation.security.DeclareRoles</tt> annotations.
+     * In addition, this method supports resource injection if the
+     * class with the given <tt>className</tt> represents a Managed Bean.
+     * See the Java EE platform and JSR 299 specifications for additional
+     * details about Managed Beans and resource injection.
+     *
      * @param servletName the name of the servlet
      * @param className the fully qualified class name of the servlet
      *
      * @return a ServletRegistration object that may be used to further
      * configure the registered servlet, or <tt>null</tt> if this
-     * ServletContext already contains a servlet with a matching name
+     * ServletContext already contains a complete ServletRegistration for
+     * a servlet with the given <tt>servletName</tt> 
      *
      * @throws IllegalStateException if this ServletContext has already
      * been initialized
@@ -772,15 +788,20 @@ public interface ServletContext {
      * <p>The registered servlet may be further configured via the returned
      * {@link ServletRegistration} object.
      *
+     * <p>If this ServletContext already contains a preliminary
+     * ServletRegistration for a servlet with the given <tt>servletName</tt>,
+     * it will be completed (by assigning the class name of the given servlet
+     * instance to it) and returned.
+     *
      * @param servletName the name of the servlet
      * @param servlet the servlet instance to register
      *
      * @return a ServletRegistration object that may be used to further
      * configure the given servlet, or <tt>null</tt> if this
-     * ServletContext already contains a servlet with a matching name,
-     * or if the same servlet instance has already been registered with
-     * this or another ServletContext that is part of the same servlet
-     * container
+     * ServletContext already contains a complete ServletRegistration for a
+     * servlet with the given <tt>servletName</tt> or if the same servlet
+     * instance has already been registered with this or another
+     * ServletContext in the same container
      *
      * @throws IllegalStateException if this ServletContext has already
      * been initialized
@@ -807,13 +828,29 @@ public interface ServletContext {
      * <p>The registered servlet may be further configured via the returned
      * {@link ServletRegistration} object.
      *
+     * <p>If this ServletContext already contains a preliminary
+     * ServletRegistration for a servlet with the given <tt>servletName</tt>,
+     * it will be completed (by assigning the name of the given
+     * <tt>servletClass</tt> to it) and returned.
+     *
+     * <p>This method introspects the given <tt>servletClass</tt> for
+     * the {@link javax.servlet.annotation.ServletSecurity}, 
+     * {@link javax.servlet.annotation.MultipartConfig},
+     * <tt>javax.annotation.security.RunAs</tt>, and
+     * <tt>javax.annotation.security.DeclareRoles</tt> annotations.
+     * In addition, this method supports resource injection if the
+     * given <tt>servletClass</tt> represents a Managed Bean.
+     * See the Java EE platform and JSR 299 specifications for additional
+     * details about Managed Beans and resource injection.
+     *
      * @param servletName the name of the servlet
      * @param servletClass the class object from which the servlet will be
      * instantiated
      *
      * @return a ServletRegistration object that may be used to further
      * configure the registered servlet, or <tt>null</tt> if this
-     * ServletContext already contains a servlet with a matching name
+     * ServletContext already contains a complete ServletRegistration for
+     * the given <tt>servletName</tt> 
      *
      * @throws IllegalStateException if this ServletContext has already
      * been initialized
@@ -831,20 +868,32 @@ public interface ServletContext {
 
 
     /**
-     * Instantiates the given Servlet class and performs any required
-     * resource injection into the new Servlet instance before returning
-     * it.
+     * Instantiates the given Servlet class.
      *
      * <p>The returned Servlet instance may be further customized before it
      * is registered with this ServletContext via a call to 
      * {@link #addServlet(String,Servlet)}.
      *
+     * <p>The given Servlet class must define a zero argument constructor,
+     * which is used to instantiate it.
+     *
+     * <p>This method introspects the given <tt>clazz</tt> for
+     * the following annotations:
+     * {@link javax.servlet.annotation.ServletSecurity}, 
+     * {@link javax.servlet.annotation.MultipartConfig},
+     * <tt>javax.annotation.security.RunAs</tt>, and
+     * <tt>javax.annotation.security.DeclareRoles</tt>.
+     * In addition, this method supports resource injection if the
+     * given <tt>clazz</tt> represents a Managed Bean.
+     * See the Java EE platform and JSR 299 specifications for additional
+     * details about Managed Beans and resource injection.
+     *
      * @param clazz the Servlet class to instantiate
      *
      * @return the new Servlet instance
      *
-     * @throws ServletException if an error occurs during the instantiation
-     * of, or resource injection into the new Servlet
+     * @throws ServletException if the given <tt>clazz</tt> fails to be
+     * instantiated
      *
      * @throws UnsupportedOperationException if this ServletContext was
      * passed to the {@link ServletContextListener#contextInitialized} method
@@ -861,9 +910,9 @@ public interface ServletContext {
      * Gets the ServletRegistration corresponding to the servlet with the
      * given <tt>servletName</tt>.
      *
-     * @return the ServletRegistration corresponding to the servlet with the
-     * given <tt>servletName</tt>, or null if no ServletRegistration exists
-     * under that name in this ServletContext
+     * @return the (complete or preliminary) ServletRegistration for the
+     * servlet with the given <tt>servletName</tt>, or null if no
+     * ServletRegistration exists under that name
      *
      * @throws UnsupportedOperationException if this ServletContext was
      * passed to the {@link ServletContextListener#contextInitialized} method
@@ -889,8 +938,9 @@ public interface ServletContext {
      * <p>Any changes to the returned Map must not affect this
      * ServletContext.
      *
-     * @return Map of the ServletRegistration objects corresponding
-     * to all servlets currently registered with this ServletContext
+     * @return Map of the (complete and preliminary) ServletRegistration
+     * objects corresponding to all servlets currently registered with this
+     * ServletContext
      *
      * @throws UnsupportedOperationException if this ServletContext was
      * passed to the {@link ServletContextListener#contextInitialized} method
@@ -914,12 +964,23 @@ public interface ServletContext {
      * classloader associated with the application represented by this
      * ServletContext.
      *
+     * <p>If this ServletContext already contains a preliminary
+     * FilterRegistration for a filter with the given <tt>filterName</tt>,
+     * it will be completed (by assigning the given <tt>className</tt> to it)
+     * and returned.
+     *
+     * <p>This method supports resource injection if the class with the
+     * given <tt>className</tt> represents a Managed Bean.
+     * See the Java EE platform and JSR 299 specifications for additional
+     * details about Managed Beans and resource injection.
+     *
      * @param filterName the name of the filter
      * @param className the fully qualified class name of the filter
      *
      * @return a FilterRegistration object that may be used to further
      * configure the registered filter, or <tt>null</tt> if this
-     * ServletContext already contains a filter with a matching name
+     * ServletContext already contains a complete FilterRegistration for
+     * a filter with the given <tt>filterName</tt> 
      *
      * @throws IllegalStateException if this ServletContext has already
      * been initialized
@@ -943,15 +1004,20 @@ public interface ServletContext {
      * <p>The registered filter may be further configured via the returned
      * {@link FilterRegistration} object.
      *
+     * <p>If this ServletContext already contains a preliminary
+     * FilterRegistration for a filter with the given <tt>filterName</tt>,
+     * it will be completed (by assigning the class name of the given filter
+     * instance to it) and returned.
+     *
      * @param filterName the name of the filter
      * @param filter the filter instance to register
      *
      * @return a FilterRegistration object that may be used to further
      * configure the given filter, or <tt>null</tt> if this
-     * ServletContext already contains a filter with a matching name,
-     * or if the same filter instance has already been registered with
-     * this or another ServletContext that is part of the same servlet
-     * container
+     * ServletContext already contains a complete FilterRegistration for a
+     * filter with the given <tt>filterName</tt> or if the same filter
+     * instance has already been registered with this or another
+     * ServletContext in the same container
      *
      * @throws IllegalStateException if this ServletContext has already
      * been initialized
@@ -975,13 +1041,24 @@ public interface ServletContext {
      * <p>The registered filter may be further configured via the returned
      * {@link FilterRegistration} object.
      *
+     * <p>If this ServletContext already contains a preliminary
+     * FilterRegistration for a filter with the given <tt>filterName</tt>,
+     * it will be completed (by assigning the name of the given
+     * <tt>filterClass</tt> to it) and returned.
+     *
+     * <p>This method supports resource injection if the given
+     * <tt>filterClass</tt> represents a Managed Bean.
+     * See the Java EE platform and JSR 299 specifications for additional
+     * details about Managed Beans and resource injection.
+     *
      * @param filterName the name of the filter
      * @param filterClass the class object from which the filter will be
      * instantiated
      *
      * @return a FilterRegistration object that may be used to further
      * configure the registered filter, or <tt>null</tt> if this
-     * ServletContext already contains a filter with a matching name
+     * ServletContext already contains a complete FilterRegistration for a
+     * filter with the given <tt>filterName</tt> 
      *
      * @throws IllegalStateException if this ServletContext has already
      * been initialized
@@ -999,20 +1076,26 @@ public interface ServletContext {
 
 
     /**
-     * Instantiates the given Filter class and performs any required
-     * resource injection into the new Filter instance before returning
-     * it.
+     * Instantiates the given Filter class.
      *
      * <p>The returned Filter instance may be further customized before it
      * is registered with this ServletContext via a call to 
      * {@link #addFilter(String,Filter)}.
      *
+     * <p>The given Filter class must define a zero argument constructor,
+     * which is used to instantiate it.
+     *
+     * <p>This method supports resource injection if the given
+     * <tt>clazz</tt> represents a Managed Bean.
+     * See the Java EE platform and JSR 299 specifications for additional
+     * details about Managed Beans and resource injection.
+     *
      * @param clazz the Filter class to instantiate
      *
      * @return the new Filter instance
      *
-     * @throws ServletException if an error occurs during the instantiation
-     * of, or resource injection into the new Filter
+     * @throws ServletException if the given <tt>clazz</tt> fails to be
+     * instantiated
      *
      * @throws UnsupportedOperationException if this ServletContext was
      * passed to the {@link ServletContextListener#contextInitialized} method
@@ -1030,9 +1113,9 @@ public interface ServletContext {
      * Gets the FilterRegistration corresponding to the filter with the
      * given <tt>filterName</tt>.
      *
-     * @return the FilterRegistration corresponding to the filter with the
-     * given <tt>filterName</tt>, or null if no FilterRegistration exists
-     * under that name in this ServletContext
+     * @return the (complete or preliminary) FilterRegistration for the
+     * filter with the given <tt>filterName</tt>, or null if no
+     * FilterRegistration exists under that name
      *
      * @throws UnsupportedOperationException if this ServletContext was
      * passed to the {@link ServletContextListener#contextInitialized} method
@@ -1058,8 +1141,9 @@ public interface ServletContext {
      * <p>Any changes to the returned Map must not affect this
      * ServletContext.
      *
-     * @return Map of the FilterRegistration objects corresponding
-     * to all filters currently registered with this ServletContext
+     * @return Map of the (complete and preliminary) FilterRegistration
+     * objects corresponding to all filters currently registered with this
+     * ServletContext
      *
      * @throws UnsupportedOperationException if this ServletContext was
      * passed to the {@link ServletContextListener#contextInitialized} method
@@ -1201,6 +1285,11 @@ public interface ServletContext {
      * then the new listener will be added to the end of the ordered list of
      * listeners of that interface.
      *
+     * <p>This method supports resource injection if the class with the
+     * given <tt>className</tt> represents a Managed Bean.
+     * See the Java EE platform and JSR 299 specifications for additional
+     * details about Managed Beans and resource injection.
+     *
      * @param className the fully qualified class name of the listener
      *
      * @throws IllegalArgumentException if the class with the given name
@@ -1296,6 +1385,11 @@ public interface ServletContext {
      * then the new listener will be added to the end of the ordered list
      * of listeners of that interface.
      *
+     * <p>This method supports resource injection if the given
+     * <tt>listenerClass</tt> represents a Managed Bean.
+     * See the Java EE platform and JSR 299 specifications for additional
+     * details about Managed Beans and resource injection.
+     *
      * @param listenerClass the listener class to be instantiated
      *
      * @throws IllegalArgumentException if the given <tt>listenerClass</tt>
@@ -1318,9 +1412,7 @@ public interface ServletContext {
 
 
     /**
-     * Instantiates the given EventListener class and performs any
-     * required resource injection into the new EventListener instance
-     * before returning it.
+     * Instantiates the given EventListener class.
      *
      * <p>The specified EventListener class must implement at least one of
      * the <code>{@link ServletContextListener}</code>,
@@ -1335,12 +1427,20 @@ public interface ServletContext {
      * before it is registered with this ServletContext via a call to
      * {@link #addListener(EventListener)}.
      *
+     * <p>The given EventListener class must define a zero argument
+     * constructor, which is used to instantiate it.
+     *
+     * <p>This method supports resource injection if the given
+     * <tt>clazz</tt> represents a Managed Bean.
+     * See the Java EE platform and JSR 299 specifications for additional
+     * details about Managed Beans and resource injection.
+     *
      * @param clazz the EventListener class to instantiate
      *
      * @return the new EventListener instance
      *
-     * @throws ServletException if an error occurs during the instantiation
-     * of, or resource injection into the new EventListener
+     * @throws ServletException if the given <tt>clazz</tt> fails to be
+     * instantiated
      *
      * @throws UnsupportedOperationException if this ServletContext was
      * passed to the {@link ServletContextListener#contextInitialized} method
@@ -1415,6 +1515,34 @@ public interface ServletContext {
      * @since Servlet 3.0
      */
     public ClassLoader getClassLoader();
+
+
+    /**
+     * Declares role names that are tested using <code>isUserInRole</code>.
+     *
+     * <p>Roles that are implicitly declared as a result of their use within
+     * the {@link ServletRegistration.Dynamic#setServletSecurity
+     * setServletSecurity} or {@link ServletRegistration.Dynamic#setRunAsRole
+     * setRunAsRole} methods of the {@link ServletRegistration} interface need
+     * not be declared.
+     *
+     * @param roleNames the role names being declared
+     *
+     * @throws UnsupportedOperationException if this ServletContext was
+     * passed to the {@link ServletContextListener#contextInitialized} method
+     * of a {@link ServletContextListener} that was neither declared in
+     * <code>web.xml</code> or <code>web-fragment.xml</code>, nor annotated
+     * with {@link javax.servlet.annotation.WebListener}
+     *
+     * @throws IllegalArgumentException if any of the argument roleNames is
+     * null or the empty string
+     *
+     * @throws IllegalStateException if the ServletContext has already
+     * been initialized
+     *
+     * @since Servlet 3.0
+     */
+    public void declareRoles(String... roleNames);
 }
 
 

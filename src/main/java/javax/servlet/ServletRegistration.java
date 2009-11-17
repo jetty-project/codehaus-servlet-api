@@ -52,6 +52,9 @@ public interface ServletRegistration extends Registration {
      * <p>If any of the specified URL patterns are already mapped to a 
      * different Servlet, no updates will be performed.
      *
+     * <p>If this method is called multiple times, each successive call
+     * adds to the effects of the former.
+     *
      * @param urlPatterns the URL patterns of the servlet mapping
      *
      * @return the (possibly empty) Set of URL patterns that are already
@@ -78,6 +81,15 @@ public interface ServletRegistration extends Registration {
     public Collection<String> getMappings();
 
     /**
+     * Gets the name of the runAs role of the Servlet represented by this
+     * <code>ServletRegistration</code>.
+     * 
+     * @return the name of the runAs role, or null if the Servlet is
+     * configured to run as its caller
+     */
+    public String getRunAsRole();
+
+    /**
      * Interface through which a {@link Servlet} registered via one of the
      * <tt>addServlet</tt> methods on {@link ServletContext} may be further
      * configured.
@@ -90,9 +102,9 @@ public interface ServletRegistration extends Registration {
          *
          * <p>A <tt>loadOnStartup</tt> value of greater than or equal to
          * zero indicates to the container the initialization priority of
-	 * the Servlet. In this case, the container must instantiate and
+         * the Servlet. In this case, the container must instantiate and
          * initialize the Servlet during the initialization phase of the
-	 * ServletContext, that is, after it has invoked all of the
+         * ServletContext, that is, after it has invoked all of the
          * ServletContextListener objects configured for the ServletContext
          * at their {@link ServletContextListener#contextInitialized}
          * method.
@@ -107,10 +119,89 @@ public interface ServletRegistration extends Registration {
          * @param loadOnStartup the initialization priority of the Servlet
          *
          * @throws IllegalStateException if the ServletContext from which
-         * this dynamic ServletRegistration was obtained has already been
-         * initialized
+         * this ServletRegistration was obtained has already been initialized
          */
         public void setLoadOnStartup(int loadOnStartup);
+
+        /**
+         * Sets the {@link ServletSecurityElement} to be applied to the
+         * mappings defined for this <code>ServletRegistration</code>.
+         *
+         * <p>This method applies to all mappings added to this
+         * <code>ServletRegistration</code> up until the point that the
+         * <code>ServletContext</code> from which it was obtained has been
+         * initialized.
+         * 
+         * <p>If a URL pattern of this ServletRegistration is an exact target
+         * of a <code>security-constraint</code> that was established via
+         * the portable deployment descriptor, then this method does not
+         * change the <code>security-constraint</code> for that pattern,
+         * and the pattern will be included in the return value.
+         * 
+         * <p>If a URL pattern of this ServletRegistration is an exact
+         * target of a security constraint that was established via the
+         * {@link javax.servlet.annotation.ServletSecurity} annotation
+         * or a previous call to this method, then this method replaces
+         * the security constraint for that pattern.
+         * 
+         * <p>If a URL pattern of this ServletRegistration is neither the
+         * exact target of a security constraint that was established via
+         * the {@link javax.servlet.annotation.ServletSecurity} annotation
+         * or a previous call to this method, nor the exact target of a
+         * <code>security-constraint</code> in the portable deployment
+         * descriptor, then this method establishes the security constraint
+         * for that pattern from the argument
+         * <code>ServletSecurityElement</code>.
+         * 
+         * @param constraint the {@link ServletSecurityElement} to be applied
+         * to the patterns mapped to this ServletRegistration
+         * 
+         * @return the (possibly empty) Set of URL patterns that were already
+         * the exact target of a <code>security-constraint</code> that was
+         * established via the portable deployment descriptor. This method
+         * has no effect on the patterns included in the returned set
+         * 
+         * @throws IllegalArgumentException if <tt>constraint</tt> is null
+         * 
+         * @throws IllegalStateException if the {@link ServletContext} from
+         * which this <code>ServletRegistration</code> was obtained has
+         * already been initialized 
+         */
+        public Set<String> setServletSecurity(ServletSecurityElement constraint);
+
+        /**
+         * Sets the {@link MultipartConfigElement} to be applied to the
+         * mappings defined for this <code>ServletRegistration</code>. If this
+         * method is called multiple times, each successive call overrides the
+         * effects of the former.
+         *
+         * @param multipartConfig the {@link MultipartConfigElement} to be
+         * applied to the patterns mapped to the registration
+         *
+         * @throws IllegalArgumentException if <tt>multipartConfig</tt> is
+         * null
+         *
+         * @throws IllegalStateException if the {@link ServletContext} from
+         * which this ServletRegistration was obtained has already been
+         * initialized
+         */
+        public void setMultipartConfig(
+            MultipartConfigElement multipartConfig);
+
+        /**
+         * Sets the name of the <code>runAs</code> role for this
+         * <code>ServletRegistration</code>.
+         *
+         * @param roleName the name of the <code>runAs</code> role
+         *
+         * @throws IllegalArgumentException if <tt>roleName</tt> is null
+         *
+         * @throws IllegalStateException if the {@link ServletContext} from
+         * which this ServletRegistration was obtained has already been
+         * initialized
+         */
+        public void setRunAsRole(String roleName);
+
     }
 
 }
