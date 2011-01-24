@@ -144,9 +144,6 @@ public class Cookie implements Cloneable {
 		|| name.startsWith("$")
 	    ) {
 	    String errMsg = lStrings.getString("err.cookie_name_is_token");
-	    Object[] errArgs = new Object[1];
-	    errArgs[0] = name;
-	    errMsg = MessageFormat.format(errMsg, errArgs);
 	    throw new IllegalArgumentException(errMsg);
 	}
 

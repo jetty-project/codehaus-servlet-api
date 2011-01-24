@@ -654,8 +654,6 @@ public abstract class HttpServlet extends GenericServlet
 	resp.setContentLength(responseLength);
 	ServletOutputStream out = resp.getOutputStream();
 	out.print(responseString);	
-	out.close();
-	return;
     }		
 
 
@@ -745,10 +743,6 @@ public abstract class HttpServlet extends GenericServlet
 	    //
 
 	    String errMsg = lStrings.getString("http.method_not_implemented");
-	    Object[] errArgs = new Object[1];
-	    errArgs[0] = method;
-	    errMsg = MessageFormat.format(errMsg, errArgs);
-	    
 	    resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, errMsg);
 	}
     }
@@ -824,174 +818,72 @@ public abstract class HttpServlet extends GenericServlet
 
 
 
+
 /*
  * A response that includes no body, for use in (dumb) "HEAD" support.
  * This just swallows that body, counting the bytes in order to set
  * the content length appropriately.  All other methods delegate directly
- * to the HTTP Servlet Response object used to construct this one.
+ * to the wrapped HTTP Servlet Response object.
  */
 // file private
-class NoBodyResponse implements HttpServletResponse {
-    private HttpServletResponse		resp;
-    private NoBodyOutputStream		noBody;
-    private PrintWriter			writer;
-    private boolean			didSetContentLength;
+class NoBodyResponse extends HttpServletResponseWrapper {
+
+    private static final ResourceBundle lStrings
+        = ResourceBundle.getBundle("javax.servlet.http.LocalStrings");
+
+    private NoBodyOutputStream          noBody;
+    private PrintWriter                 writer;
+    private boolean                     didSetContentLength;
+    private boolean usingOutputStream;
 
     // file private
     NoBodyResponse(HttpServletResponse r) {
-	resp = r;
-	noBody = new NoBodyOutputStream();
+        super(r);
+        noBody = new NoBodyOutputStream();
     }
 
     // file private
     void setContentLength() {
-	if (!didSetContentLength)
-	  resp.setContentLength(noBody.getContentLength());
+        if (!didSetContentLength) {
+            if (writer != null) {
+                writer.flush();
+            }
+            setContentLength(noBody.getContentLength());
+        }
     }
-
-
-    // SERVLET RESPONSE interface methods
 
     public void setContentLength(int len) {
-	resp.setContentLength(len);
-	didSetContentLength = true;
+        super.setContentLength(len);
+        didSetContentLength = true;
     }
 
-    public void setCharacterEncoding(String charset)
-      { resp.setCharacterEncoding(charset); }
+    public ServletOutputStream getOutputStream() throws IOException {
 
-    public void setContentType(String type)
-      { resp.setContentType(type); }
+        if (writer != null) {
+            throw new IllegalArgumentException(
+                lStrings.getString("err.ise.getOutputStream"));
+        }
+        usingOutputStream = true;
 
-    public String getContentType()
-      { return resp.getContentType(); }
-
-    public ServletOutputStream getOutputStream() throws IOException
-      { return noBody; }
-
-    public String getCharacterEncoding()
-	{ return resp.getCharacterEncoding(); }
-
-    public PrintWriter getWriter() throws UnsupportedEncodingException
-    {
-	if (writer == null) {
-	    OutputStreamWriter	w;
-
-	    w = new OutputStreamWriter(noBody, getCharacterEncoding());
-	    writer = new PrintWriter(w);
-	}
-	return writer;
+        return noBody;
     }
 
-    public void setBufferSize(int size) throws IllegalStateException
-      { resp.setBufferSize(size); }
+    public PrintWriter getWriter() throws UnsupportedEncodingException {
 
-    public int getBufferSize()
-      { return resp.getBufferSize(); }
+        if (usingOutputStream) {
+            throw new IllegalArgumentException(
+                lStrings.getString("err.ise.getWriter"));
+        }
 
-    public void reset() throws IllegalStateException
-      { resp.reset(); }
-      
-      public void resetBuffer() throws IllegalStateException
-      { resp.resetBuffer(); }
+        if (writer == null) {
+            OutputStreamWriter w = new OutputStreamWriter(
+                noBody, getCharacterEncoding());
+            writer = new PrintWriter(w);
+        }
 
-    public boolean isCommitted()
-      { return resp.isCommitted(); }
-
-    public void flushBuffer() throws IOException
-      { resp.flushBuffer(); }
-
-    public void setLocale(Locale loc)
-      { resp.setLocale(loc); }
-
-    public Locale getLocale()
-      { return resp.getLocale(); }
-
-
-    // HTTP SERVLET RESPONSE interface methods
-
-    public void addCookie(Cookie cookie)
-      { resp.addCookie(cookie); }
-
-    public boolean containsHeader(String name)
-      { return resp.containsHeader(name); }
-
-    /** @deprecated */
-    public void setStatus(int sc, String sm)
-      { resp.setStatus(sc, sm); }
-
-    public void setStatus(int sc)
-      { resp.setStatus(sc); }
-
-    public void setHeader(String name, String value)
-      { resp.setHeader(name, value); }
-
-    public void setIntHeader(String name, int value)
-      { resp.setIntHeader(name, value); }
-
-    public void setDateHeader(String name, long date)
-      { resp.setDateHeader(name, date); }
-
-    public void sendError(int sc, String msg) throws IOException
-      { resp.sendError(sc, msg); }
-
-    public void sendError(int sc) throws IOException
-      { resp.sendError(sc); }
-
-    public void sendRedirect(String location) throws IOException
-      { resp.sendRedirect(location); }
-    
-    public String encodeURL(String url) 
-      { return resp.encodeURL(url); }
-
-    public String encodeRedirectURL(String url)
-      { return resp.encodeRedirectURL(url); }
-      
-    public void addHeader(String name, String value)
-      { resp.addHeader(name, value); }
-      
-    public void addDateHeader(String name, long value)
-      { resp.addDateHeader(name, value); }
-      
-    public void addIntHeader(String name, int value)
-      { resp.addIntHeader(name, value); }
-      
-      
-      
-
-    /**
-     * @deprecated	As of Version 2.1, replaced by
-     * 			{@link HttpServletResponse#encodeURL}.
-     *
-     */
-     
-     
-    public String encodeUrl(String url) 
-      { return this.encodeURL(url); }
-      
-      
-      
-      
-      
-      
-      
-
-    /**
-     * @deprecated	As of Version 2.1, replaced by
-     *			{@link HttpServletResponse#encodeRedirectURL}.
-     *
-     */
-     
-     
-    public String encodeRedirectUrl(String url)
-      { return this.encodeRedirectURL(url); }
-
+        return writer;
+    }
 }
-
-
-
-
-
 
 
 /*
@@ -1026,11 +918,9 @@ class NoBodyOutputStream extends ServletOutputStream {
 	if (len >= 0) {
 	    contentLength += len;
 	} else {
-	    // XXX
-	    // isn't this really an IllegalArgumentException?
-	    
-	    String msg = lStrings.getString("err.io.negativelength");
-	    throw new IOException("negative length");
+            // This should have thrown an IllegalArgumentException, but
+            // changing this would break backwards compatibility
+            throw new IOException(lStrings.getString("err.io.negativelength"));
 	}
     }
 }
