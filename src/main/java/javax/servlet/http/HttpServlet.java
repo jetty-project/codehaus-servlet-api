@@ -860,7 +860,7 @@ class NoBodyResponse extends HttpServletResponseWrapper {
     public ServletOutputStream getOutputStream() throws IOException {
 
         if (writer != null) {
-            throw new IllegalArgumentException(
+            throw new IllegalStateException(
                 lStrings.getString("err.ise.getOutputStream"));
         }
         usingOutputStream = true;
@@ -871,7 +871,7 @@ class NoBodyResponse extends HttpServletResponseWrapper {
     public PrintWriter getWriter() throws UnsupportedEncodingException {
 
         if (usingOutputStream) {
-            throw new IllegalArgumentException(
+            throw new IllegalStateException(
                 lStrings.getString("err.ise.getWriter"));
         }
 
